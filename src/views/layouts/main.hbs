@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXCLUSIV-Cars App</title>
+    <link rel="icon" href="/img/favicon.ico">
+    {{!-- Bootstrap 4.5 --}}
+    <link rel="stylesheet" href="/lib/bootstrap/4.5/css/bootstrap.min.css">
+    {{!-- FontAwesome --}}
+    <script src="https://kit.fontawesome.com/f7c7cdbbf0.js" crossorigin="anonymous"></script>
+    {{!-- Styles --}}
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    {{> navigation}}
+    {{> messages}}
+    
+    {{{ body }}}
+
+    {{> footer}}
+
+    {{!-- scripts --}}
+    <script src="/lib/jquery/3.5.1/jquery-3.5.1.min.js"></script>
+    <script src="/lib/bootstrap/4.5/js/bootstrap.min.js"></script>
+    <script src="/lib/js/script.js"></script>
+</body>
+</html>
