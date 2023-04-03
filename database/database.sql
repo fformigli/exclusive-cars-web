@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 create table users (
     id serial not null primary key,
     fullname varchar(40),
@@ -106,3 +108,8 @@ create table work_order_comments
 ALTER TABLE work_order_comments
   OWNER TO postgres;
 GRANT ALL ON TABLE work_order_comments TO postgres;
+
+-- cargamos configuraciones
+insert into work_order_fuel (description) values ('Reserva'), ('1/4'), ('1/2'), ('3/4'), ('Lleno');
+
+insert into work_order_status (description) values ('Pendiente'), ('Terminada'), ('Presupuesto pendiente'), ('Presupuesto aprobado'), ('Presupuesto rechazado');
