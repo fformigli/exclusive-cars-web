@@ -2,9 +2,10 @@
   "name": "exclusiv-cars-web",
   "version": "1.0.0",
   "description": "Server for Exclusiv-Cars App",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon src/"
+    "dev": "npx nodemon",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,10 @@
   },
   "homepage": "https://github.com/fformigli/exclusiv-cars-web#readme",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "@prisma/client": "^4.12.0",
+    "bcrypt": "^5.1.0",
     "connect-flash": "^0.1.1",
+    "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.1",
     "express-pg-session": "^1.1.0",
@@ -27,12 +30,22 @@
     "handlebars-dateformat": "^1.1.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.2.1",
-    "timeago.js": "^4.0.2"
+    "dayjs": "^1.11.7"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "@types/bcrypt": "^5.0.0",
+    "@types/connect-flash": "0.0.37",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.11",
+    "nodemon": "^2.0.22",
+    "prisma": "^4.12.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }

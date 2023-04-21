@@ -12,23 +12,17 @@
                         <thead>
                             <th>Nombre Completo</th>
                             <th>Usuario</th>
-                            <th>Es Administrador</th>
-                            <th>Creado el</th>
+                            <th>Rol</th>
+                            <th>Creado</th>
                             <th></th>
                         </thead>
                         <tbody>
                         {{#each users}}
                             <tr>
-                                <td>{{fullname}}</td>
+                                <td>{{fullName}}</td>
                                 <td>{{username}}</td>
-                                <td>
-                                    {{#if isadmin}}
-                                        Si
-                                    {{else}}
-                                        No
-                                    {{/if}}
-                                </td>
-                                <td>{{timeago created_at}}</td>
+                                <td>{{role.name}}</td>
+                                <td>{{timeAgo createdAt}}</td>
                                 <td>
                                     <button onclick="eliminarUsuario({{id}});" class="btn btn-danger">
                                         Borrar

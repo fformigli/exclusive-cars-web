@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXCLUSIV-Cars App</title>
+    <title>Exclusive Cars</title>
     <link rel="icon" href="/img/favicon.ico">
     {{!-- Bootstrap 4.5 --}}
     <link rel="stylesheet" href="/lib/bootstrap/4.5/css/bootstrap.min.css">
@@ -12,18 +12,29 @@
     {{!-- Styles --}}
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column h-100">
 
+<nav class="navbar sticky-top navbar-dark bg-dark">
+    <div>
+        <img src="/img/logo.png" width="56" height="56" class="d-inline-block align-to">
+    <a class="navbar-brand app-title" href="/">
+        EXCLUSIVE <spam class="orange">C</spam>ARS
+    </a>
+
+    </div>
+</nav>
+{{> messages}}
+<div class="container-fluid flex-grow-1 d-flex">
     {{> navigation}}
-    {{> messages}}
-    
+
     {{{ body }}}
+</div>
 
-    {{> footer}}
+{{> footer}}
 
-    {{!-- scripts --}}
-    <script src="/lib/jquery/3.5.1/jquery-3.5.1.min.js"></script>
-    <script src="/lib/bootstrap/4.5/js/bootstrap.min.js"></script>
-    <script src="/lib/js/script.js"></script>
+{{!-- scripts --}}
+<script src="/lib/jquery/3.5.1/jquery-3.5.1.min.js"></script>
+<script src="/lib/bootstrap/4.5/js/bootstrap.min.js"></script>
+<script src="/lib/js/script.js"></script>
 </body>
 </html>

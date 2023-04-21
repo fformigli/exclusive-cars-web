@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.routes = void 0;
+const auth_1 = require("../lib/auth");
+const express_1 = require("express");
+const workOrders_1 = require("../controllers/workOrders");
+const multer_1 = require("../lib/multer");
+exports.routes = (0, express_1.Router)();
+exports.routes.get('/work-orders', auth_1.isLoggedIn, workOrders_1.list);
+exports.routes.get('/work-orders/add', auth_1.isLoggedIn, workOrders_1.add);
+exports.routes.get('/work-orders/edit/:id', auth_1.isLoggedIn, workOrders_1.edit);
+exports.routes.post('/work-orders/save', auth_1.isLoggedIn, multer_1.uploads.single('archivos'), workOrders_1.saveNew);
+exports.routes.post('/work-orders/save/:id', auth_1.isLoggedIn, multer_1.uploads.single('archivos'), workOrders_1.saveUpdate);
+exports.routes.get('/work-orders/delete/file/:wo/:id', auth_1.isLoggedIn, workOrders_1.deleteFiles);
+exports.routes.post('/work-orders/add/comment/:wo', auth_1.isLoggedIn, workOrders_1.addComment);
