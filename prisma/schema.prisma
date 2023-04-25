@@ -22,6 +22,7 @@ model User {
   password  String
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    Int
+  type      Int      @default(1)
   createdBy Int?
   createdAt DateTime @default(now())
 

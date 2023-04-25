@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "npx nodemon",
-    "build": "tsc"
+    "build": "tsc",
+    "fullbuild": "rmtsc"
   },
   "repository": {
     "type": "git",

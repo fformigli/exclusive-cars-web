@@ -129,12 +129,6 @@ table tbody tr {
     background-color: #0000001A;
 }
 
-a {
-    color: #ff6233;
-    text-decoration: none;
-    background-color: transparent;
-}
-
 .sidebar {
     width: 250px !important;
 }
@@ -146,6 +140,27 @@ a {
 .navbar-brand {
     vertical-align: middle;
 }
+
 .navbar {
     padding-bottom: 0;
+}
+
+a {
+    color: #ff6233;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:not([href]) {
+    color: #ff6233;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:hover {
+    color: white;
+}
+
+a:not([href]):hover {
+    color: white;
 }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "type" INTEGER NOT NULL DEFAULT 1;

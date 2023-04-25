@@ -2,11 +2,19 @@
     <div class="sidebar flex-shrink-1 bg-dark pt-3" id="Navbar">
         <ul class="nav flex-sm-column font-weight-bold">
             <li class="nav-item">
-                <a class="nav-link" href="/admin">Administrar</a>
+                <a class="nav-link" href="/admin">Administrar Usuarios</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                <a class="nav-link" onclick="logout()">Cerrar Sesión</a>
             </li>
         </ul>
     </div>
+
+    <script type="text/javascript">
+        function logout() {
+            if (confirm('¿Esta seguro de que desea cerrar sesión?'))
+                location.href = '/logout';
+            return false;
+        }
+    </script>
 {{/if}}
