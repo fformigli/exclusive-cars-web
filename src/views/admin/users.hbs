@@ -17,13 +17,13 @@
                     </thead>
                     <tbody>
                     {{#each users}}
-                        <tr>
+                        <tr onclick="editUser({{id}})">
                             <td>{{fullName}}</td>
                             <td>{{username}}</td>
                             <td>{{role.name}}</td>
                             <td>{{timeAgo createdAt}}</td>
                             <td>
-                                <button onclick="eliminarUsuario({{id}});" class="btn btn-danger">
+                                <button type="button" onclick="deleteUser({{id}});" class="btn btn-danger">
                                     Borrar
                                 </button>
                             </td>
@@ -39,9 +39,16 @@
 </div>
 
 <script type="text/javascript">
-    function eliminarUsuario(id) {
-        if (confirm('¿Esta seguro de que desea eliminar el usuario?'))
+    function deleteUser(id) {
+        event.stopPropagation()
+        if (confirm('¿Esta seguro de que desea eliminar el usuario?')) {
             location.href = '/admin/users/delete/' + id;
+        }
+        return false
+    }
+
+    function editUser(id) {
+        location.href = '/admin/users/' + id;
         return false;
     }
 </script>

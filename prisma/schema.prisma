@@ -25,7 +25,18 @@ model User {
   type      Int      @default(1)
   createdBy Int?
   createdAt DateTime @default(now())
+  Client    Client?
 
   @@map("users")
 }
 
+model Client {
+  id          Int    @id @default(autoincrement())
+  user        User   @relation(fields: [userId], references: [id])
+  userId      Int    @unique
+  phoneNumber String
+  ruc         String
+  email       String
+  createdBy Int?
+  createdAt DateTime @default(now())
+}

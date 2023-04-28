@@ -1,4 +1,7 @@
+import prisma from "./prisma";
+
 export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro') => {
+  console.log(id)
   const data = await model.findUnique({
     where: {
       id
@@ -16,9 +19,15 @@ export const validateReferenceNameAlreadyExists = async (
   model: any,
   where: any,
   modelName: string = 'un registro',
-  fieldName: string = 'este valor'
+  fieldName: string = 'este valor',
+  id?: number
 ) => {
-  console.log({ model, where, modelName, fieldName})
+  console.log({ model, where, modelName, fieldName })
+  if (id) {
+    where.id = {
+      not: id
+    }
+  }
   const data = await model.findFirst({
     where
   })
@@ -28,4 +37,14 @@ export const validateReferenceNameAlreadyExists = async (
   }
 
   return
+}
+
+export const validateUserReferenceId = async (id: number) => {
+  console.log(id)
+  return validateReferenceId(prisma.user, id, 'usuario')
+}
+
+export const validateRoleReferenceId = async (id: number) => {
+  console.log(id)
+  return validateReferenceId(prisma.role, id, 'rol')
 }

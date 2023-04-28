@@ -164,3 +164,14 @@ a:hover {
 a:not([href]):hover {
     color: white;
 }
+
+dt {
+    text-align: left;
+}
+
+.alert {
+    margin-top: 10px;
+    position: absolute;
+    z-index: 9999;
+    right: 10px;
+}

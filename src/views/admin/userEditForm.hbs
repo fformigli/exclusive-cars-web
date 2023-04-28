@@ -5,7 +5,7 @@
                 <h3>Nuevo Usuario</h3>
             </div>
             <div class="card-body">
-                <form action="/admin/users" method="POST" autocomplete="nope">
+                <form action="/admin/users/{{id}}" method="POST" autocomplete="nope">
                     <dl class="form-group">
                         <dt>Nombre completo del usuario</dt>
                         <dd>
@@ -17,11 +17,6 @@
                             <input type="text" name="username" placeholder="Nickname" class="form-control"
                                    autocomplete="false" required value="{{username}}">
                         </dd>
-                        <dt>Contraseña</dt>
-                        <dd>
-                            <input type="password" name="password" class="form-control" placeholder="Contraseña"
-                                   autocomplete="new-password" required value="{{password}}">
-                        </dd>
                         <dt><label for="role"> Rol</label></dt>
                         <dd>
                             <select name="roleId" class="custom-select" required>
@@ -31,9 +26,7 @@
                             </select>
                         </dd>
                         <dd>
-                            <button class="btn btn-success btn-block">
-                                Añadir
-                            </button>
+                            {{> formButtons}}
                         </dd>
                     </dl>
                 </form>

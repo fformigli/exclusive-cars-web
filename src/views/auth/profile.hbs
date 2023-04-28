@@ -3,11 +3,11 @@
         <div class="mx-auto">
             <div class="card text-center">
                 <div class="card-body">
-                    <h3>Welcome {{user.fullname}}</h3>
+                    <h3>Perfil del usuario {{user.fullName}}</h3>
                     <h4>{{user.username}}</h4>
-                    <a href="/links/" class="btn btn-primary m-4"> 
-                        Links
-                    </a>
+                    <button type="button" class="btn btn-danger btn-block mt-5" onclick="logout()">
+                        Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </div>

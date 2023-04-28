@@ -6,35 +6,34 @@
             </div>
             <div class="card-body">
                 <form action="/admin/users" method="POST" autocomplete="nope">
-                    <div class="form-group">
-                        <dl class="form-group">
-                            <dd>
-                                <input type="text" name="fullName" placeholder="Nombre Completo" class="form-control"
-                                       autofocus required value="{{fullName}}">
-                            </dd>
-                            <dd>
-                                <input type="text" name="username" placeholder="Nickname" class="form-control"
-                                       autocomplete="false" required value="{{username}}">
-                            </dd>
-                            <dd>
-                                <input type="password" name="password" class="form-control" placeholder="Contraseña"
-                                       autocomplete="new-password" required value="{{password}}">
-                            </dd>
-                            <dt><label for="role"> Rol</label></dt>
-                            <dd>
-                                <select name="roleId" class="custom-select" required>
-                                    {{#each roles}}
-                                        <option value="{{id}}" {{ selectedOption id ../role.id }}>{{name}}</option>
-                                    {{/each}}
-                                </select>
-                            </dd>
-                            <dd>
-                                <button class="btn btn-success btn-block">
-                                    Añadir
-                                </button>
-                            </dd>
-                        </dl>
-                    </div>
+                    <dl class="form-group">
+                        <dt>Nombre completo del usuario</dt>
+                        <dd>
+                            <input type="text" name="fullName" placeholder="Nombre Completo" class="form-control"
+                                   autofocus required value="{{fullName}}">
+                        </dd>
+                        <dt>Nickname</dt>
+                        <dd>
+                            <input type="text" name="username" placeholder="Nickname" class="form-control"
+                                   autocomplete="false" required value="{{username}}">
+                        </dd>
+                        <dt>Contraseña</dt>
+                        <dd>
+                            <input type="password" name="password" class="form-control" placeholder="Contraseña"
+                                   autocomplete="new-password" required value="{{password}}">
+                        </dd>
+                        <dt><label for="role"> Rol</label></dt>
+                        <dd>
+                            <select name="roleId" class="custom-select" required>
+                                {{#each roles}}
+                                    <option value="{{id}}" {{ selectedOption id ../role.id }}>{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </dd>
+                        <dd>
+                            {{> formButtons}}
+                        </dd>
+                    </dl>
                 </form>
             </div>
         </div>
