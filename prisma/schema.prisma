@@ -11,32 +11,49 @@ model Role {
   id   Int    @id @default(autoincrement())
   name String
   User User[]
+  context String @default("user")
 
   @@map("roles")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
-  fullName  String
-  password  String
-  role      Role     @relation(fields: [roleId], references: [id])
-  roleId    Int
-  type      Int      @default(1)
-  createdBy Int?
-  createdAt DateTime @default(now())
-  Client    Client?
+  id             Int           @id @default(autoincrement())
+  documentType   Configuration @relation(fields: [documentTypeId], references: [id])
+  documentTypeId Int
+  documentNumber String
+  username       String
+  fullName       String
+  password       String
+  role           Role          @relation(fields: [roleId], references: [id])
+  roleId         Int
+  type           Int           @default(1)
+  createdBy      Int?
+  createdAt      DateTime      @default(now())
+  Client         Client?
 
   @@map("users")
 }
 
 model Client {
-  id          Int    @id @default(autoincrement())
-  user        User   @relation(fields: [userId], references: [id])
-  userId      Int    @unique
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @unique
   phoneNumber String
   ruc         String
   email       String
-  createdBy Int?
-  createdAt DateTime @default(now())
+  createdBy   Int?
+  createdAt   DateTime @default(now())
+
+  @@map("clients")
+}
+
+model Configuration {
+  id        Int    @id @default(autoincrement())
+  type      String
+  shortName String
+  name      String
+  User      User[]
+
+  @@index([type])
+  @@map("configurations")
 }

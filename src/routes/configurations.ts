@@ -1,9 +1,9 @@
 import { isLoggedIn } from "../lib/auth";
 import { Router } from "express";
-import { admin } from "../controllers/admin";
+import { configurations } from "../controllers/configurations";
 
 const routes = Router();
 
-routes.get('/admin', isLoggedIn, admin);
+routes.get('/configurations', isLoggedIn, configurations);
 
 export default routes

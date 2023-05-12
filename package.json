@@ -5,8 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "npx nodemon",
-    "build": "tsc",
-    "fullbuild": "rmtsc"
+    "build": "call scripts/fullbuild.bat",
+    "prisma-migrate": "npx prisma migrate dev --name dbupdate",
+    "prisma-reset": "npx prisma migrate reset"
   },
   "repository": {
     "type": "git",

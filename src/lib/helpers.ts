@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt"
+import { Request, Response } from "express";
 
 export const encryptPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -25,4 +26,9 @@ export const getQueryString = (body: any) => {
   }
 
   return query
+}
+
+export const notImplementedYetRedirect = (req: Request, res: Response, path: string) => {
+  req.flash('message', 'Aún no esta implementado')
+  res.redirect(path);
 }

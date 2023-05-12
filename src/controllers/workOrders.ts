@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { notImplementedYetRedirect } from "../lib/helpers";
 
 const pool = require('../database');
 const fs = require('fs');
@@ -16,6 +17,7 @@ async function chargeCombos() {
 }
 
 export const list = async (req: Request, res: Response) => {
+  return notImplementedYetRedirect(req, res, '/')
   try {
     let dataForm: any = await chargeCombos();
     dataForm.filter = req.query
