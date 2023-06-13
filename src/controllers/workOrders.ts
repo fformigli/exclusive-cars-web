@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { notImplementedYetRedirect } from "../lib/helpers";
 
 const pool = require('../database');
 const fs = require('fs');
@@ -7,50 +6,23 @@ const path = require('path');
 
 async function chargeCombos() {
   try {
-    const statusList = await pool.query('select * from work_order_status order by id');
-    const fuelList = await pool.query('select * from work_order_fuel order by id');
-    const userList = await pool.query('select id, fullname from users where active = 1 order by fullname');
-    return { 'statusList': statusList.rows, 'fuelList': fuelList.rows, 'userList': userList.rows };
+    // const statusList = await pool.query('select * from work_order_status order by id');
+    // const fuelList = await pool.query('select * from work_order_fuel order by id');
+    // const userList = await pool.query('select id, fullname from users where active = 1 order by fullname');
+
+    return { 'statusList': {}, 'fuelList': {}, 'userList': {} };
   } catch (err) {
     throw err;
   }
 }
 
 export const list = async (req: Request, res: Response) => {
-  return notImplementedYetRedirect(req, res, '/')
   try {
     let dataForm: any = await chargeCombos();
     dataForm.filter = req.query
     console.log(dataForm.filter)
 
-    let where = req.user.isadmin ? 'where true ' : `where encargado = ${req.user.id} `;
-    if (dataForm.filter) {
-      if (dataForm.filter.status && dataForm.filter.status !== 'all') {
-        where += `and wo.statusid = ${dataForm.filter.status} `
-      }
-      if (dataForm.filter.encargado && dataForm.filter.encargado !== 'all') {
-        where += `and wo.encargado = ${dataForm.filter.encargado} `
-      }
-      if (dataForm.filter.search) {
-        where += `and coalesce(wo.cliente,'')||coalesce(wo.vehiculo,'') ilike '%${dataForm.filter.search}%' `
-      }
-    }
-    console.log(where)
-
-    const sql = 'select wo.id, wo.cliente, wo.vehiculo, wo.telefono, wo.created_at,u.fullname as encargado, s.description as status, wo.description '
-      + 'from work_orders wo join users u on u.id = wo.encargado join work_order_status s on s.id = wo.statusid '
-      + where
-      + 'order by created_at desc ';
-
-    console.log(sql)
-
-    const workOrders = await pool.query(sql);
-    dataForm.workOrders = workOrders.rows
-
-    console.log(dataForm)
-    console.log(dataForm.workOrders)
-
-    return res.render('work-orders/list.hbs', dataForm);
+   return res.render('work-orders/list.hbs', dataForm);
 
   } catch (err: any) {
     console.error(err);

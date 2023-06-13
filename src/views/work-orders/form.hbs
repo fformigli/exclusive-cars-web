@@ -1,11 +1,11 @@
-<div class="continter p-4">
-    <div class="col-sm-8 mx-auto">
+<div class="container p-4">
+    <div class="mx-auto">
         <div class="card">
             <div class="card-header">
                 {{#unless wo}}
-                    <h4>Nueva Orden de Trabajo</h4>
+                    <h3>Nueva Orden de Trabajo</h3>
                 {{else}}
-                    <h4>Editando orden de Trabajo ID: {{wo.id}}</h4>
+                    <h3>Editando orden de Trabajo ID: {{wo.id}}</h3>
                     <div class="comment-by">Agregado el {{formatter created_at "DD/MM/YYYY HH:mm"}}</div>
                 {{/unless}}
             </div>
@@ -14,8 +14,8 @@
                     <div class="row">
                         <div class="col-sm-6">  
                             <dl>
-                                <dt><label for="cliente">Nombre del Conductor:</label></dt>
-                                <dd><input type="text" value="{{wo.cliente}}" class="form-control" name="cliente" placeholder="Nombre del Conductor"  autofocus></dd>
+                                <dt><label for="cliente">Cliente:</label></dt>
+                                <dd><input type="text" value="{{wo.cliente}}" class="form-control" name="cliente" placeholder="Seleccione un cliente"  autofocus></dd>
 
                                 <dt><label for="vehiculo">Datos del Vehículo:</label></dt>
                                 <dd><input type="text" value="{{wo.vehiculo}}" class="form-control" name="vehiculo" placeholder="Marca/Modelo/Color"></dd>
@@ -117,14 +117,7 @@
                     </div>
                     <div class="row">
                         <div class="mx-auto" >
-                            <button class="btn btn-success">
-                                
-                                {{#unless wo}}
-                                    Guardar
-                                {{else}}
-                                    Actualizar Orden de Trabajo
-                                {{/unless}}
-                            </button>
+                            {{> formButtons}}
                         </div>
                     </div>
                 </form>

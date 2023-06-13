@@ -78,7 +78,6 @@
 
 @font-face {
     font-family: Georgiaz;
-    src: url('../fonts/georgiaz.ttf')
 }
 
 body {
@@ -174,4 +173,8 @@ dt {
     position: absolute;
     z-index: 9999;
     right: 10px;
+}
+
+.card-header {
+    text-align: center !important;
 }
