@@ -5,9 +5,10 @@ import {
   validateReferenceNameAlreadyExists,
   validateRoleReferenceId,
   validateUserReferenceId
-} from "../lib/prismaUtils";
+} from "../lib/prisma/utils";
 import { encryptPassword, getQueryString } from "../lib/helpers";
 import { getDocumentTypes, getRoles } from "./configurations";
+import { USER_TYPES } from "../lib/constants/general";
 
 export const users = async (req: Request, res: Response) => {
   const users: User[] = await prisma.user.findMany({
@@ -168,4 +169,14 @@ const checkNoModificationAllowedUsers = (loggedUser: User, user: User) => {
   if (user.id === 1) {
     throw "No se puede modificar el usuario Administrador"
   }
+}
+
+export const getEmployees = async () => {
+  const employees: User[] = await prisma.user.findMany({
+    where: {
+      type: USER_TYPES.EMPLOYEE
+    }
+  })
+
+  return employees
 }

@@ -1,4 +1,4 @@
-import prisma from "./prisma";
+import prisma from "./index";
 
 export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro') => {
   console.log(id)

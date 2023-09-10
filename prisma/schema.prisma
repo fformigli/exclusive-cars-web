@@ -75,7 +75,7 @@ model ConfigurationType {
 model WorkOrder {
   id                 Int    @id @default(autoincrement())
   Client             Client @relation(fields: [clientId], references: [id])
-  state              String
+  state              Int
   contactPhone       String
   fuelState          Int
   vinnro             String

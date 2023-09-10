@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <dl>
-                                <dt><label for="search">Busqueda:</label></dt>
+                                <dt><label for="search">Búsqueda:</label></dt>
                                 <dd><input type="text" value="{{filter.search}}" class="form-control" name="search" placeholder="Cliente/Vehiculo"  autofocus></dd>
                             </dl>
                         </div>
@@ -18,9 +18,9 @@
                                 <dt><label for="encargado">Encargado:</label></dt>
                                 <dd>
                                     <select name="encargado" class="custom-select">
-                                        <option value="all"></option>
-                                        {{#each userList}}
-                                            <option value="{{id}}" {{ selectedOption id ../filter.encargado }}>{{fullname}}</option>
+                                        <option value=""></option>
+                                        {{#each employees}}
+                                            <option value="{{id}}" {{ selectedOption id ../filter.encargado }}>{{fullName}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>
@@ -30,10 +30,10 @@
                             <dl>
                                 <dt><label for="status">Estado Pedido:</label></dt>
                                 <dd>
-                                    <select name="status" class="custom-select">
-                                        <option value="all"></option>
-                                        {{#each statusList}}
-                                            <option value="{{id}}"  {{ selectedOption id ../filter.status }}>{{description}}</option>
+                                    <select name="state" class="custom-select">
+                                        <option value=""></option>
+                                        {{#each workOrderStates}}
+                                            <option value="{{value}}"  {{ selectedOption value ../filter.state }}>{{label}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>
@@ -57,7 +57,7 @@
                 <div class="row">
                     <table class="table table-hover">
                         <thead>
-                            <th scope="col">ID</th>
+                            <th scope="col">#</th>
                             <th scope="col">Cliente</th>
                             <th scope="col">Vehículo</th>
                             <th scope="col">Teléfono</th>
@@ -77,7 +77,7 @@
                                 <td>{{status}}</td>
                             </tr>
                             {{else}}
-                            <tr><td colspan="7">No hay ordenes de trabajo aún.</td></tr>
+                                {{> noElements}}
                             {{/each}}
                         </tbody>
                     </table>

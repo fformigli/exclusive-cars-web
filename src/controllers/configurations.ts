@@ -6,7 +6,7 @@ import {
   validateConfigurationReferenceId,
   validateConfigurationTypeReferenceId,
   validateReferenceNameAlreadyExists
-} from "../lib/prismaUtils";
+} from "../lib/prisma/utils";
 import { getQueryString } from "../lib/helpers";
 
 const getCombosData = async () => {

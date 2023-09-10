@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
+import { User } from "@prisma/client";
+import { getEmployees } from "./users";
+import { IWorkOrderState } from "../lib/types";
+import { WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
+import prisma from "../lib/prisma";
 
 // const fs = require('fs');
 // const path = require('path');
 
 async function chargeCombos() {
   try {
-    // const statusList = await pool.query('select * from work_order_status order by id');
-    // const fuelList = await pool.query('select * from work_order_fuel order by id');
-    // const userList = await pool.query('select id, fullname from users where active = 1 order by fullname');
+    // todo
 
     return { 'statusList': {}, 'fuelList': {}, 'userList': {} };
   } catch (err) {
@@ -15,15 +18,38 @@ async function chargeCombos() {
   }
 }
 
+const getWorkOrderStates = () => Object.entries(WORK_ORDER_STATE_TRANSLATE).reduce((wo: any, s: [string, string]) => {
+  wo.push({
+    value: s[0],
+    label: s[1]
+  })
+  return wo
+}, [])
+
+const getListCombos = async () => {
+  const employees: User[] = await getEmployees()
+  const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
+
+  return {
+    employees,
+    workOrderStates
+  }
+}
+
 
 export const list = async (req: Request, res: Response) => {
   try {
-    let dataForm: any = await chargeCombos();
+    let dataForm: any = await getListCombos();
     dataForm.filter = req.query
     console.log(dataForm.filter)
 
-    return res.render('work-orders/list.hbs', dataForm);
+    dataForm.workOrders = await prisma.workOrder.findMany({
+      orderBy: {
+        id: 'desc'
+      }
+    })
 
+    return res.render('work-orders/list.hbs', dataForm);
   } catch (err: any) {
     console.error(err);
     req.flash('message', 'Error: ' + err.message);

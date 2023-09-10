@@ -2,7 +2,7 @@ import { Client } from "@prisma/client";
 import prisma from "../lib/prisma";
 import { Request, Response } from "express";
 import { getDocumentTypes, getRoles } from "./configurations";
-import { validateReferenceNameAlreadyExists } from "../lib/prismaUtils";
+import { validateReferenceNameAlreadyExists } from "../lib/prisma/utils";
 import { encryptPassword, getQueryString, notImplementedYetRedirect } from "../lib/helpers";
 
 export const listClients = async (req: Request, res: Response) => {
