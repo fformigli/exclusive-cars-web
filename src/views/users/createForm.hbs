@@ -16,7 +16,7 @@
                         <dd>
                             <select name="documentType" class="custom-select" required>
                                 {{#each documentTypes}}
-                                    <option value="{{id}}" {{ selectedOption id ../documentType }}>{{shortName}} - {{name}}</option>
+                                    <option value="{{id}}" {{ selectedOption id ../DocumentType }}>{{shortName}} - {{name}}</option>
                                 {{/each}}
                             </select>
                         </dd>
@@ -39,7 +39,7 @@
                         <dd>
                             <select name="roleId" class="custom-select" required>
                                 {{#each roles}}
-                                    <option value="{{id}}" {{ selectedOption id ../role.id }}>{{name}}</option>
+                                    <option value="{{id}}" {{ selectedOption id ../Role.id }}>{{name}}</option>
                                 {{/each}}
                             </select>
                         </dd>

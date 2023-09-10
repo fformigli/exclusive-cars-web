@@ -8,7 +8,7 @@ import { encryptPassword, getQueryString, notImplementedYetRedirect } from "../l
 export const listClients = async (req: Request, res: Response) => {
   const clients: Client[] = await prisma.client.findMany({
     include: {
-      user: true
+      User: true
     }
   })
 
@@ -35,13 +35,13 @@ export const createClient = async (req: Request, res: Response) => {
 
     await prisma.client.create({
       data: {
-        user: {
+        User: {
           create: {
             password,
-            role: {
+            Role: {
               connect: { id: 2 } // rol 2 para clientes
             },
-            documentType: {
+            DocumentType: {
               connect: { id: +documentType }
             },
             documentNumber: documentNumber,

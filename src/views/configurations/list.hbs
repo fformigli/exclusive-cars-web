@@ -1,0 +1,58 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3>Configuraciones</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <button onclick="location.href='/configurations/add'" class="btn btn-success">
+                        Nueva Configuración
+                    </button>
+                </div>
+                <table class="table">
+                    <thead>
+                    <th>#</th>
+                    <th>Tipo</th>
+                    <th>Nombre corto</th>
+                    <th>Descripción</th>
+                    <th>Creado</th>
+                    <th></th>
+                    </thead>
+                    <tbody>
+                    {{#each configurations}}
+                        <tr onclick="editElement({{id}})">
+                            <td>{{id}}</td>
+                            <td>{{ConfigurationType.translate}}</td>
+                            <td>{{shortName}}</td>
+                            <td>{{name}}</td>
+                            <td>
+                                <button type="button" onclick="deleteElement({{id}});" class="btn btn-danger">
+                                    Borrar
+                                </button>
+                            </td>
+                        </tr>
+                    {{else}}
+                        {{> noElements}}
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function deleteElement(id) {
+        event.stopPropagation()
+        if (confirm('¿Está seguro de que desea eliminar la configuración?')) {
+            location.href = '/configurations/delete/' + id;
+        }
+        return false
+    }
+
+    function editElement(id) {
+        location.href = '/configurations/' + id;
+        return false;
+    }
+</script>

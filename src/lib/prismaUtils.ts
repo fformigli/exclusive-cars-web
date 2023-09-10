@@ -40,11 +40,17 @@ export const validateReferenceNameAlreadyExists = async (
 }
 
 export const validateUserReferenceId = async (id: number) => {
-  console.log(id)
   return validateReferenceId(prisma.user, id, 'usuario')
 }
 
 export const validateRoleReferenceId = async (id: number) => {
-  console.log(id)
   return validateReferenceId(prisma.role, id, 'rol')
+}
+
+export const validateConfigurationTypeReferenceId = async (id: number) => {
+  return validateReferenceId(prisma.configurationType, id, 'tipo de configuración')
+}
+
+export const validateConfigurationReferenceId = async (id: number) => {
+  return validateReferenceId(prisma.configuration, id, 'configuración')
 }

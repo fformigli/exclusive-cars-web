@@ -8,9 +8,9 @@ datasource db {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String
-  User User[]
+  id      Int    @id @default(autoincrement())
+  name    String
+  User    User[]
   context String @default("user")
 
   @@map("roles")
@@ -18,42 +18,74 @@ model Role {
 
 model User {
   id             Int           @id @default(autoincrement())
-  documentType   Configuration @relation(fields: [documentTypeId], references: [id])
+  DocumentType   Configuration @relation(fields: [documentTypeId], references: [id])
   documentTypeId Int
   documentNumber String
   username       String
   fullName       String
   password       String
-  role           Role          @relation(fields: [roleId], references: [id])
+  Role           Role          @relation(fields: [roleId], references: [id])
   roleId         Int
   type           Int           @default(1)
   createdBy      Int?
   createdAt      DateTime      @default(now())
   Client         Client?
+  WorkOrder      WorkOrder[]
 
   @@map("users")
 }
 
 model Client {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int      @unique
+  id          Int         @id @default(autoincrement())
+  User        User        @relation(fields: [userId], references: [id])
+  userId      Int         @unique
   phoneNumber String
   ruc         String
   email       String
   createdBy   Int?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
+  WorkOrder   WorkOrder[]
 
   @@map("clients")
 }
 
 model Configuration {
-  id        Int    @id @default(autoincrement())
-  type      String
-  shortName String
-  name      String
-  User      User[]
+  id                  Int               @id @default(autoincrement())
+  shortName           String
+  name                String
+  User                User[]
+  ConfigurationType   ConfigurationType @relation(fields: [configurationTypeId], references: [id])
+  configurationTypeId Int
+  seed                Boolean           @default(false)
 
-  @@index([type])
+  @@index([configurationTypeId])
   @@map("configurations")
+}
+
+model ConfigurationType {
+  id            Int             @id @default(autoincrement())
+  name          String
+  description   String
+  translate     String
+  Configuration Configuration[]
+
+  @@map("configuration_types")
+}
+
+model WorkOrder {
+  id                 Int    @id @default(autoincrement())
+  Client             Client @relation(fields: [clientId], references: [id])
+  state              String
+  contactPhone       String
+  fuelState          Int
+  vinnro             String
+  mileage            Int
+  clientId           Int
+  vehicleInformation String
+  plate              String
+  Assignee           User   @relation(fields: [userId], references: [id])
+  userId             Int
+  description        String
+
+  @@map("work_orders")
 }

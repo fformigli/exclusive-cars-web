@@ -3,7 +3,7 @@ import es from "dayjs/locale/es"
 import utc from "dayjs/plugin/utc"
 import relativeTime from "dayjs/plugin/relativeTime"
 import timezone from "dayjs/plugin/timezone"
-import { DEFAULT_TIMEZONE } from "./constants";
+import { DEFAULT_TIMEZONE } from "./constants/general";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)

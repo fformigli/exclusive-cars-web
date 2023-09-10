@@ -15,9 +15,11 @@ export const users = async (req: Request, res: Response) => {
       type: 1
     },
     include: {
-      role: true
+      Role: true
     }
   })
+
+  console.log(users)
 
   res.render('users/list.hbs', { users })
 };
@@ -27,7 +29,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params?.id, 10)
 
     const user = await validateUserReferenceId(id)
-    await checkNoModificationAllowedUsers(req.user, user)
+    checkNoModificationAllowedUsers(req.user, user)
 
     await prisma.user.delete({
       where: {
@@ -67,10 +69,10 @@ export const createUser = async (req: Request, res: Response) => {
       data: {
         fullName,
         password,
-        role: {
+        Role: {
           connect: { id: role.id }
         },
-        documentType: {
+        DocumentType: {
           connect: { id: +documentType }
         },
         documentNumber: documentNumber,
@@ -89,7 +91,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 }
 
-export const editUser = async (req: Request, res: Response) => {
+export const editUserForm = async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params?.id, 10)
 
@@ -98,15 +100,17 @@ export const editUser = async (req: Request, res: Response) => {
     const dataForm: any = {
       fullName: user.fullName,
       id: user.id,
-      role: {
+      Role: {
         id: user.roleId
       },
       roles: await getRoles('user'),
       documentTypes: await getDocumentTypes(),
+      documentTypeId: user.documentTypeId,
       documentNumber: user.documentNumber,
       username: user.username,
       cancelPath: '/users',
     }
+    console.log(dataForm)
 
     req.flash('success', 'Usuario modificado')
     res.render('users/editForm', dataForm);
@@ -126,7 +130,7 @@ export const updateUser = async (req: Request, res: Response) => {
     const user = await validateUserReferenceId(id)
     const role = await validateRoleReferenceId(+roleId)
     await validateReferenceNameAlreadyExists(prisma.user, { username }, 'un usuario', 'este nickname', id)
-    await checkNoModificationAllowedUsers(req.user, user)
+    checkNoModificationAllowedUsers(req.user, user)
 
     await prisma.user.update({
       where: {
@@ -134,10 +138,10 @@ export const updateUser = async (req: Request, res: Response) => {
       },
       data: {
         fullName,
-        role: {
+        Role: {
           connect: { id: role.id }
         },
-        documentType: {
+        DocumentType: {
           connect: { id: +documentType }
         },
         documentNumber,

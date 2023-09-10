@@ -1,0 +1,41 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                {{#unless id}}
+                    <h3>Nueva Configuración</h3>
+                {{else}}
+                    <h3>Editando Configuración</h3>
+                {{/unless}}
+            </div>
+            <div class="card-body">
+                <form action="/configurations/{{id}}" method="POST" autocomplete="off">
+                    <dl class="form-group">
+                        <dt>Tipo de Configuración</dt>
+                        <dd>
+                            <select name="configurationTypeId" class="custom-select" required>
+                                {{#each configurationTypes}}
+                                    <option value="{{id}}" {{ selectedOption id ../configurationTypeId }}>{{description}}</option>
+                                {{/each}}
+                            </select>
+                        </dd>
+                        <dt>Nombre Corto</dt>
+                        <dd>
+                            <input type="text" name="shortName" placeholder="Nombre Corto" class="form-control"
+                                   autofocus required value="{{shortName}}">
+                        </dd>
+                        <dt>Descripción</dt>
+                        <dd>
+                            <input type="text" name="name" placeholder="Descripcion" class="form-control"
+                                   autocomplete="false" required value="{{name}}">
+                        </dd>
+                        <dd>
+                            {{> formButtons}}
+                        </dd>
+                    </dl>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/js/validator.js"></script>
