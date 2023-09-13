@@ -1,20 +1,42 @@
 import { Request, Response } from "express";
-import { User } from "@prisma/client";
+import { Client, Configuration, User, WorkOrder } from "@prisma/client";
 import { getEmployees } from "./users";
-import { IWorkOrderState } from "../lib/types";
+import { IDataForm, IWorkOrderState } from "../lib/types";
 import { WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
 import prisma from "../lib/prisma";
+import { getFuelLevels } from "./configurations";
+import { getClientList } from "./clients";
 
 // const fs = require('fs');
 // const path = require('path');
 
-async function chargeCombos() {
-  try {
-    // todo
+interface IWorkOrderDataForm extends IDataForm {
+  workOrderStates: IWorkOrderState[],
+  employees: User[],
+  fuelStates: Configuration[],
+  clients: Client[]
+}
 
-    return { 'statusList': {}, 'fuelList': {}, 'userList': {} };
-  } catch (err) {
-    throw err;
+interface IWorkOrderListDataForm {
+  employees: User[],
+  workOrderStates: IWorkOrderState[]
+  filter?: any
+  workOrders?: WorkOrder[]
+}
+
+async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
+  const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
+  const employees: User[] = await getEmployees()
+  const fuelStates: Configuration[] = await getFuelLevels()
+  const clients: Client[] = await getClientList()
+
+
+  return {
+    workOrderStates,
+    employees,
+    fuelStates,
+    clients,
+    cancelPath: '/work-orders'
   }
 }
 
@@ -26,7 +48,7 @@ const getWorkOrderStates = () => Object.entries(WORK_ORDER_STATE_TRANSLATE).redu
   return wo
 }, [])
 
-const getListCombos = async () => {
+const getListCombos = async (): Promise<IWorkOrderListDataForm> => {
   const employees: User[] = await getEmployees()
   const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
 
@@ -39,7 +61,7 @@ const getListCombos = async () => {
 
 export const list = async (req: Request, res: Response) => {
   try {
-    let dataForm: any = await getListCombos();
+    let dataForm: IWorkOrderListDataForm = await getListCombos();
     dataForm.filter = req.query
     console.log(dataForm.filter)
 
@@ -60,7 +82,8 @@ export const list = async (req: Request, res: Response) => {
 //
 export const createWorkOrderForm = async (req: Request, res: Response) => {
   try {
-    const dataForm = await chargeCombos();
+    const dataForm: IWorkOrderDataForm  = await chargeFormCombos();
+
     return res.render('work-orders/form.hbs', dataForm);
   } catch (err: any) {
     console.error(err);

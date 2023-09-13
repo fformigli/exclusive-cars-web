@@ -14,17 +14,22 @@
                     <div class="row">
                         <div class="col-sm-6">  
                             <dl>
-                                <dt><label for="cliente">Cliente:</label></dt>
-                                <dd><input type="text" value="{{wo.cliente}}" class="form-control" name="cliente" placeholder="Seleccione un cliente"  autofocus></dd>
-
+                                <dt><label for="client">Cliente:</label></dt>
+                                <dd>
+                                    <select name="client" class="custom-select">
+                                        {{#each clients}}
+                                            <option value="{{id}}" {{ selectedOption id ../wo.Client.id }}>{{User.fullName}}</option>
+                                        {{/each}}
+                                    </select>
+                                </dd>
                                 <dt><label for="vehiculo">Datos del Vehículo:</label></dt>
                                 <dd><input type="text" value="{{wo.vehiculo}}" class="form-control" name="vehiculo" placeholder="Marca/Modelo/Color"></dd>
                                 
-                                <dt><label for="encargado">Encargado:</label></dt>
+                                <dt><label for="assignee">Encargado:</label></dt>
                                 <dd>
-                                    <select name="encargado" class="custom-select">
-                                        {{#each userList}}
-                                            <option value="{{id}}" {{ selectedOption id ../wo.encargado }}>{{fullname}}</option>
+                                    <select name="assignee" class="custom-select">
+                                        {{#each employees}}
+                                            <option value="{{id}}" {{ selectedOption id ../wo.Assignee.id }}>{{fullName}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>
@@ -32,11 +37,11 @@
                         </div>
                         <div class="col">
                             <dl>
-                                <dt><label for="status">Estado Pedido:</label></dt>
+                                <dt><label for="state">Estado Pedido:</label></dt>
                                 <dd>
-                                    <select name="status" class="custom-select">
-                                        {{#each statusList}}
-                                            <option value="{{id}}"  {{ selectedOption id ../wo.statusid }}>{{description}}</option>
+                                    <select name="state" class="custom-select">
+                                        {{#each workOrderStates}}
+                                            <option value="{{value}}"  {{ selectedOption value ../wo.state }}>{{label}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>
@@ -51,8 +56,8 @@
                                 <dt><label for="combustible">Estado Combustible:</label></dt>
                                 <dd>
                                     <select name="combustible" class="custom-select">
-                                        {{#each fuelList}}
-                                            <option value="{{id}}"  {{ selectedOption id ../wo.fuelid }}>{{description}}</option>
+                                        {{#each fuelStates}}
+                                            <option value="{{id}}"  {{ selectedOption id ../wo.fuelState }}>{{name}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>

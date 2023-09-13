@@ -8,3 +8,7 @@ export interface IWorkOrderState {
   value: number,
   label: string
 }
+
+export interface IDataForm {
+  cancelPath: string
+}

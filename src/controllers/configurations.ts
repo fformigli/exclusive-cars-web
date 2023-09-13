@@ -8,6 +8,7 @@ import {
   validateReferenceNameAlreadyExists
 } from "../lib/prisma/utils";
 import { getQueryString } from "../lib/helpers";
+import { CONFIGURATION_TYPES } from "../lib/constants/general";
 
 const getCombosData = async () => {
   const dataForm: any = {
@@ -154,7 +155,7 @@ export const getDocumentTypes = async () => {
   // obtenemos los tipos de documentos
   return prisma.configuration.findMany({
     where: {
-      configurationTypeId: 1
+      configurationTypeId: CONFIGURATION_TYPES.DOCUMENT_TYPES
     }
   });
 }
@@ -163,6 +164,14 @@ export const getRoles = async (context: string) => {
   return prisma.role.findMany({
     where: {
       context
+    }
+  })
+}
+
+export const getFuelLevels = async () => {
+  return prisma.configuration.findMany({
+    where: {
+      configurationTypeId: CONFIGURATION_TYPES.FUEL_LEVELS
     }
   })
 }

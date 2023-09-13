@@ -71,3 +71,11 @@ export const editClientForm = async (req: Request, res: Response) => notImplemen
 export const updateClient = async (req: Request, res: Response) => notImplementedYetRedirect(req, res, '/clients')
 
 export const deleteClient = async (req: Request, res: Response) => notImplementedYetRedirect(req, res, '/clients')
+
+export const getClientList = async () => {
+  return prisma.client.findMany({
+    include: {
+      User: true
+    }
+  })
+}
