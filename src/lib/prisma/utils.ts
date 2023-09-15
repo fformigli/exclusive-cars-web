@@ -1,11 +1,12 @@
 import prisma from "./index";
 
-export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro') => {
+export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro', include?: any) => {
   console.log(id)
   const data = await model.findUnique({
     where: {
       id
-    }
+    },
+    ...include
   })
 
   if (!data) {
@@ -57,4 +58,8 @@ export const validateConfigurationTypeReferenceId = async (id: number) => {
 
 export const validateConfigurationReferenceId = async (id: number) => {
   return validateReferenceId(prisma.configuration, id, 'configuración')
+}
+
+export const validateWorkOrderReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.workOrder, id, 'orden de trabajo', include)
 }

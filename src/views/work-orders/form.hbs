@@ -6,7 +6,7 @@
                     <h3>Nueva Orden de Trabajo</h3>
                 {{else}}
                     <h3>Editando orden de Trabajo ID {{wo.id}}</h3>
-                    <div class="comment-by">Agregado el {{formatter created_at "DD/MM/YYYY HHmm"}}</div>
+                    <div class="comment-by">Agregado el {{formatter wo.createdAt "DD/MM/YYYY HH:mm"}}</div>
                 {{/unless}}
             </div>
             <div class="card-body">
@@ -24,7 +24,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="vehicleInformation">Datos del Vehículo</label>
-                                <input type="text" value="{{wo.vehiculo}}" class="form-control" name="vehicleInformation"
+                                <input type="text" value="{{wo.vehicleInformation}}" class="form-control" name="vehicleInformation"
                                        placeholder="Marca/Modelo/Color">
                             </div>
                             <div class="form-group">
@@ -32,7 +32,7 @@
                                 <select name="assignedToId" class="custom-select">
                                     {{#each employees}}
                                         <option value="{{id}}" {{ selectedOption id
-                                                                                 ../wo.Assignee.id }}>{{fullName}}</option>
+                                                                                 ../wo.AssignedTo.id }}>{{fullName}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -49,7 +49,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="contactPhone">Teléfono</label>
-                                <input type="text" value="{{wo.telefono}}" class="form-control" name="contactPhone"
+                                <input type="text" value="{{wo.contactPhone}}" class="form-control" name="contactPhone"
                                        placeholder="098X XXX XXX">
                             </div>
                             <div class="form-group">
@@ -64,18 +64,18 @@
                                 <select name="fuelStateId" class="custom-select">
                                     {{#each fuelStates}}
                                         <option value="{{id}}"  {{ selectedOption id
-                                                                                  ../wo.fuelState }}>{{name}}</option>
+                                                                                  ../wo.FuelState.id }}>{{name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="plate">Chapa N°</label>
-                                <input type="text" value="{{wo.chapa}}" class="form-control" name="plate"
+                                <input type="text" value="{{wo.plate}}" class="form-control" name="plate"
                                        placeholder="XXXX 999">
                             </div>
                             <div class="form-group">
                                 <label for="mileage">mi/km</label>
-                                <input type="text" value="{{wo.recorrido}}" class="form-control" name="mileage"
+                                <input type="text" value="{{wo.mileage}}" class="form-control" name="mileage"
                                        placeholder="X00.000 km">
                             </div>
                         </div>
@@ -123,14 +123,14 @@
                             {{/if}}
                         {{/each}}
                     </div>
-<!--                    <div class="row">-->
-<!--                        <div class="col-sm-6">-->
-<!--                            <div class="form-group">-->
-<!--                                <label>Agregar Archivos</label>-->
-<!--                                <input type="file" name="archivos" id="archivos">-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Agregar Archivos</label>
+                                <input type="file" name="archivos" id="archivos">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         {{> formButtons}}
                     </div>

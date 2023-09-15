@@ -97,3 +97,7 @@ model WorkOrder {
 
   @@map("work_orders")
 }
+
+// todo workorderfiles
+// todo presupuesto
+// todo stock

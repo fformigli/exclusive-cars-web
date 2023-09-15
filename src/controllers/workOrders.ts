@@ -9,7 +9,8 @@ import { getClientList } from "./clients";
 import {
   validateClientReferenceId,
   validateConfigurationReferenceId,
-  validateUserReferenceId
+  validateUserReferenceId,
+  validateWorkOrderReferenceId
 } from "../lib/prisma/utils";
 
 // import fs from 'fs';
@@ -20,6 +21,7 @@ interface IWorkOrderDataForm extends IDataForm {
   employees: User[],
   fuelStates: Configuration[],
   clients: Client[]
+  wo?: any
 }
 
 interface IWorkOrderListDataForm {
@@ -124,7 +126,6 @@ export const list = async (req: Request, res: Response) => {
   }
 };
 
-//
 export const createWorkOrderForm = async (req: Request, res: Response) => {
   try {
     const dataForm: IWorkOrderDataForm = await chargeFormCombos();
@@ -209,29 +210,23 @@ export const createWorkOrder = async (req: Request, res: Response) => {
   }
 };
 
-// export const edit = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const dataForm: any = await chargeCombos();
-//
-//   try {
-//     // obtenemos el wo
-//     const wo = await pool.query('select * from work_orders where id = $1', [id]);
-//     dataForm.wo = wo.rows[0];
-//
-//     const wof = await pool.query('select * from work_order_files where work_order = $1 order by id', [id]);
-//     dataForm.wof = wof.rows;
-//
-//     const woc = await pool.query('select c.comment, u.fullname as created_by, c.created_at from work_order_comments c, users u where work_order = $1 and c.created_by = u.id order by c.id', [id]);
-//     dataForm.woc = woc.rows;
-//
-//     res.render('work-orders/form.hbs', dataForm);
-//
-//   } catch (err: any) {
-//     console.error(err);
-//     req.flash('message', 'Error: ' + err.message);
-//     res.redirect('/work-orders');
-//   }
-// };
+export const editWorkOrderForm = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params?.id, 10)
+
+    const dataForm: IWorkOrderDataForm = await chargeFormCombos();
+    dataForm.wo = await validateWorkOrderReferenceId(id, { include: { AssignedTo: true, Client: { include: { User: true } }, FuelState: true }})
+    console.log(dataForm.wo)
+
+
+    res.render('work-orders/form.hbs', dataForm);
+  } catch (err: any) {
+    console.error(err);
+    req.flash('message', 'Error: ' + err.message);
+    res.redirect('/work-orders');
+  }
+};
+
 //
 // export const saveUpdate = async (req: Request, res: Response) => {
 //   const {
