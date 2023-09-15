@@ -10,29 +10,25 @@
             </div>
             <div class="card-body">
                 <form action="/configurations/{{id}}" method="POST" autocomplete="off">
-                    <dl class="form-group">
-                        <dt>Tipo de Configuración</dt>
-                        <dd>
-                            <select name="configurationTypeId" class="custom-select" required>
-                                {{#each configurationTypes}}
-                                    <option value="{{id}}" {{ selectedOption id ../configurationTypeId }}>{{description}}</option>
-                                {{/each}}
-                            </select>
-                        </dd>
-                        <dt>Nombre Corto</dt>
-                        <dd>
-                            <input type="text" name="shortName" placeholder="Nombre Corto" class="form-control"
-                                   autofocus required value="{{shortName}}">
-                        </dd>
-                        <dt>Descripción</dt>
-                        <dd>
-                            <input type="text" name="name" placeholder="Descripcion" class="form-control"
-                                   autocomplete="false" required value="{{name}}">
-                        </dd>
-                        <dd>
-                            {{> formButtons}}
-                        </dd>
-                    </dl>
+                    <div class="form-group">
+                        <label>Tipo de Configuración</label>
+                        <select name="configurationTypeId" class="custom-select" required>
+                            {{#each configurationTypes}}
+                                <option value="{{id}}" {{ selectedOption id ../configurationTypeId }}>{{description}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre Corto</label>
+                        <input type="text" name="shortName" placeholder="Nombre Corto" class="form-control"
+                               autofocus required value="{{shortName}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <input type="text" name="name" placeholder="Descripción" class="form-control"
+                               autocomplete="false" required value="{{name}}">
+                    </div>
+                    {{> formButtons}}
                 </form>
             </div>
         </div>

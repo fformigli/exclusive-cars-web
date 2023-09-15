@@ -52,7 +52,10 @@ export const createClient = async (req: Request, res: Response) => {
         },
         phoneNumber,
         email,
-        ruc
+        ruc,
+        CreatedBy: {
+          connect: { id: req.user.id }
+        }
       }
     })
 

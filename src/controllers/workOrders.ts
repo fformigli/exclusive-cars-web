@@ -6,9 +6,14 @@ import { WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
 import prisma from "../lib/prisma";
 import { getFuelLevels } from "./configurations";
 import { getClientList } from "./clients";
+import {
+  validateClientReferenceId,
+  validateConfigurationReferenceId,
+  validateUserReferenceId
+} from "../lib/prisma/utils";
 
-// const fs = require('fs');
-// const path = require('path');
+// import fs from 'fs';
+// import path from 'path';
 
 interface IWorkOrderDataForm extends IDataForm {
   workOrderStates: IWorkOrderState[],
@@ -22,6 +27,10 @@ interface IWorkOrderListDataForm {
   workOrderStates: IWorkOrderState[]
   filter?: any
   workOrders?: WorkOrder[]
+}
+
+interface WorkOrderListItem extends WorkOrder {
+  stateLabel?: string
 }
 
 async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
@@ -63,12 +72,48 @@ export const list = async (req: Request, res: Response) => {
   try {
     let dataForm: IWorkOrderListDataForm = await getListCombos();
     dataForm.filter = req.query
-    console.log(dataForm.filter)
+
+    const where: any = {}
+    if (req.query?.search) {
+      where.Client = {
+        User: {
+          fullName: {
+            contains: req.query.search,
+            mode: 'insensitive'
+          }
+        }
+      }
+    }
+
+    if (req.query?.assignedTo) {
+      where.AssignedTo = {
+        id: +req.query.assignedTo
+      }
+    }
+
+    if (req.query?.state) {
+      where.state = +req.query.state
+    }
+    console.log(JSON.stringify({ where }, null, 2))
 
     dataForm.workOrders = await prisma.workOrder.findMany({
       orderBy: {
         id: 'desc'
-      }
+      },
+      include: {
+        AssignedTo: true,
+        Client: {
+          include: {
+            User: true
+          }
+        }
+      },
+      where
+    })
+
+    // traducimos
+    dataForm.workOrders?.forEach((wo: WorkOrderListItem) => {
+      wo.stateLabel = WORK_ORDER_STATE_TRANSLATE[wo.state] ?? wo.state
     })
 
     return res.render('work-orders/list.hbs', dataForm);
@@ -82,7 +127,7 @@ export const list = async (req: Request, res: Response) => {
 //
 export const createWorkOrderForm = async (req: Request, res: Response) => {
   try {
-    const dataForm: IWorkOrderDataForm  = await chargeFormCombos();
+    const dataForm: IWorkOrderDataForm = await chargeFormCombos();
 
     return res.render('work-orders/form.hbs', dataForm);
   } catch (err: any) {
@@ -91,50 +136,79 @@ export const createWorkOrderForm = async (req: Request, res: Response) => {
     return res.redirect('/profile');
   }
 };
-//
-// export const saveNew = async (req: Request, res: Response) => {
-//   const {
-//     cliente,
-//     vehiculo,
-//     encargado,
-//     status,
-//     telefono,
-//     vinnro,
-//     combustible,
-//     chapa,
-//     recorrido,
-//     description
-//   } = req.body;
-//
-//   // intentamos crear la orden
-//   try {
-//     // creamos la orden de trabajo
-//     const sql = 'insert into work_orders '
-//       + '(cliente, vehiculo, encargado, statusid, fuelid, telefono, chapa, vinnro, recorrido, description, created_by) '
-//       + 'values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id';
-//
-//     const wo = await pool.query(sql, [cliente, vehiculo, encargado, status, combustible, telefono, chapa, vinnro, recorrido, description, req.user.id]);
-//
-//     // si tiene archivos, agregamos
-//     if (req.file) {
-//       var ext = path.extname(req.file.originalname).toLowerCase();
-//       let filetype = 'img';
-//       if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg')
-//         filetype = 'video';
-//
-//       await pool.query('insert into work_order_files (work_order, filename, filetype) values ($1, $2, $3)', [wo.rows[0].id, req.file.filename, filetype]);
-//     }
-//
-//     req.flash('success', 'Se agregó la orden');
-//     res.redirect('/work-orders');
-//
-//   } catch (err: any) {
-//     console.error(err);
-//     req.flash('message', 'Error: ' + err.message);
-//     res.redirect('/work-orders/add');
-//   }
-// };
-//
+
+export const createWorkOrder = async (req: Request, res: Response) => {
+  const {
+    clientId,
+    vehicleInformation,
+    assignedToId,
+    state,
+    contactPhone,
+    vinNumber,
+    fuelStateId,
+    plate,
+    mileage,
+    description
+  } = req.body;
+
+  try {
+    // creamos la orden de trabajo
+    const client = await validateClientReferenceId(+clientId)
+    const assignedTo: User = await validateUserReferenceId(+assignedToId)
+    const fuelState: Configuration = await validateConfigurationReferenceId(+fuelStateId)
+
+    await prisma.workOrder.create({
+      data: {
+        vehicleInformation,
+        state: +state,
+        contactPhone,
+        vinNumber,
+        plate,
+        mileage: +mileage,
+        description,
+        Client: {
+          connect: {
+            id: client.id
+          }
+        },
+        AssignedTo: {
+          connect: {
+            id: assignedTo.id
+          }
+        },
+        FuelState: {
+          connect: {
+            id: fuelState.id
+          }
+        },
+        CreatedBy: {
+          connect: {
+            id: req.user.id
+          }
+        }
+      }
+    })
+
+    // si tiene archivos, agregamos
+    // if (req.file) {
+    //   const ext = path.extname(req.file.originalname).toLowerCase();
+    //   let filetype = 'img';
+    //   if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg')
+    //     filetype = 'video';
+    //
+    //   // await pool.query('insert into work_order_files (work_order, filename, filetype) values ($1, $2, $3)', [wo.rows[0].id, req.file.filename, filetype]);
+    // }
+
+    req.flash('success', 'Se agregó la orden');
+    res.redirect('/work-orders');
+
+  } catch (err: any) {
+    console.error(err);
+    req.flash('message', 'Error: ' + err.message);
+    res.redirect('/work-orders/add');
+  }
+};
+
 // export const edit = async (req: Request, res: Response) => {
 //   const { id } = req.params;
 //   const dataForm: any = await chargeCombos();

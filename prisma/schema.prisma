@@ -17,20 +17,22 @@ model Role {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  DocumentType   Configuration @relation(fields: [documentTypeId], references: [id])
-  documentTypeId Int
-  documentNumber String
-  username       String
-  fullName       String
-  password       String
-  Role           Role          @relation(fields: [roleId], references: [id])
-  roleId         Int
-  type           Int           @default(1)
-  createdBy      Int?
-  createdAt      DateTime      @default(now())
-  Client         Client?
-  WorkOrder      WorkOrder[]
+  id               Int           @id @default(autoincrement())
+  DocumentType     Configuration @relation(fields: [documentTypeId], references: [id])
+  documentTypeId   Int
+  documentNumber   String
+  username         String
+  fullName         String
+  password         String
+  Role             Role          @relation(fields: [roleId], references: [id])
+  roleId           Int
+  type             Int           @default(1)
+  createdBy        Int?
+  createdAt        DateTime      @default(now())
+  Client           Client?
+  WorkOrder        WorkOrder[]   @relation("AssignedTo")
+  WorkOrderCreated WorkOrder[]   @relation("CreatedBy")
+  ClientsCreated   Client[]      @relation("CreatedBy")
 
   @@map("users")
 }
@@ -42,7 +44,8 @@ model Client {
   phoneNumber String
   ruc         String
   email       String
-  createdBy   Int?
+  CreatedBy   User        @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById Int
   createdAt   DateTime    @default(now())
   WorkOrder   WorkOrder[]
 
@@ -57,6 +60,7 @@ model Configuration {
   ConfigurationType   ConfigurationType @relation(fields: [configurationTypeId], references: [id])
   configurationTypeId Int
   seed                Boolean           @default(false)
+  WorkOrder           WorkOrder[]
 
   @@index([configurationTypeId])
   @@map("configurations")
@@ -73,19 +77,23 @@ model ConfigurationType {
 }
 
 model WorkOrder {
-  id                 Int    @id @default(autoincrement())
-  Client             Client @relation(fields: [clientId], references: [id])
+  id                 Int           @id @default(autoincrement())
+  Client             Client        @relation(fields: [clientId], references: [id])
   state              Int
   contactPhone       String
-  fuelState          Int
-  vinnro             String
+  FuelState          Configuration @relation(fields: [fuelStateId], references: [id])
+  fuelStateId        Int
+  vinNumber          String
   mileage            Int
   clientId           Int
   vehicleInformation String
   plate              String
-  Assignee           User   @relation(fields: [userId], references: [id])
+  AssignedTo         User          @relation("AssignedTo", fields: [userId], references: [id])
   userId             Int
   description        String
+  CreatedBy          User          @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById        Int
+  createdAt          DateTime      @default(now())
 
   @@map("work_orders")
 }

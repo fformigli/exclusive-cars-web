@@ -43,6 +43,10 @@ export const validateUserReferenceId = async (id: number) => {
   return validateReferenceId(prisma.user, id, 'usuario')
 }
 
+export const validateClientReferenceId = async (id: number) => {
+  return validateReferenceId(prisma.client, id, 'clientezs')
+}
+
 export const validateRoleReferenceId = async (id: number) => {
   return validateReferenceId(prisma.role, id, 'rol')
 }

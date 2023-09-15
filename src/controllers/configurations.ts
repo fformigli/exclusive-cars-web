@@ -12,7 +12,8 @@ import { CONFIGURATION_TYPES } from "../lib/constants/general";
 
 const getCombosData = async () => {
   const dataForm: any = {
-    configurationTypes: await prisma.configurationType.findMany()
+    configurationTypes: await prisma.configurationType.findMany(),
+    cancelPath: '/configurations',
   }
 
   return dataForm
@@ -84,8 +85,7 @@ export const editConfigurationForm = async (req: Request, res: Response) => {
 
     const dataForm: any = {
       ...await getCombosData(),
-      ...configuration,
-      cancelPath: '/configurations',
+      ...configuration
     }
     console.log(dataForm)
 
