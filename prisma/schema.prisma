@@ -8,12 +8,25 @@ datasource db {
 }
 
 model Role {
-  id      Int    @id @default(autoincrement())
-  name    String
-  User    User[]
-  context String @default("user")
+  id          Int          @id @default(autoincrement())
+  name        String
+  Users       User[]
+  context     String       @default("user")
+  Permissions Permission[]
+  seed        Boolean      @default(false)
+  deletedAt   DateTime?
 
   @@map("roles")
+}
+
+model Permission {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  Roles       Role[]
+  category    String
+
+  @@map("permissions")
 }
 
 model User {
@@ -29,6 +42,7 @@ model User {
   type             Int           @default(1)
   createdBy        Int?
   createdAt        DateTime      @default(now())
+  deletedAt        DateTime?
   Client           Client?
   WorkOrder        WorkOrder[]   @relation("AssignedTo")
   WorkOrderCreated WorkOrder[]   @relation("CreatedBy")
@@ -47,6 +61,7 @@ model Client {
   CreatedBy   User        @relation("CreatedBy", fields: [createdById], references: [id])
   createdById Int
   createdAt   DateTime    @default(now())
+  deletedAt   DateTime?
   WorkOrder   WorkOrder[]
 
   @@map("clients")
@@ -61,6 +76,8 @@ model Configuration {
   configurationTypeId Int
   seed                Boolean           @default(false)
   WorkOrder           WorkOrder[]
+  createdAt           DateTime          @default(now())
+  deletedAt           DateTime?
 
   @@index([configurationTypeId])
   @@map("configurations")
@@ -94,10 +111,10 @@ model WorkOrder {
   CreatedBy          User          @relation("CreatedBy", fields: [createdById], references: [id])
   createdById        Int
   createdAt          DateTime      @default(now())
+  deletedAt          DateTime?
 
   @@map("work_orders")
 }
 
 // todo workorderfiles
-// todo presupuesto
-// todo stock
+// todo workordercomments

@@ -2,15 +2,16 @@ import prisma from "./index";
 
 export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro', include?: any) => {
   console.log(id)
-  const data = await model.findUnique({
+  const data = await model.findFirst({
     where: {
-      id
+      id,
+      deletedAt: null
     },
     ...include
   })
 
   if (!data) {
-    throw `No se encuentra ningun ${modelName} con el identificador enviado.`
+    throw `No se encuentra ningún ${modelName} con el identificador enviado.`
   }
 
   return data
@@ -23,12 +24,14 @@ export const validateReferenceNameAlreadyExists = async (
   fieldName: string = 'este valor',
   id?: number
 ) => {
-  console.log({ model, where, modelName, fieldName })
+  where.deletedAt = null
+
   if (id) {
     where.id = {
       not: id
     }
   }
+
   const data = await model.findFirst({
     where
   })
@@ -40,24 +43,30 @@ export const validateReferenceNameAlreadyExists = async (
   return
 }
 
-export const validateUserReferenceId = async (id: number) => {
-  return validateReferenceId(prisma.user, id, 'usuario')
+export const blockSeedModifications = (item: any) => {
+  if (item.seed) {
+    throw "No se puede modificar este registro. Es parte del sistema base."
+  }
 }
 
-export const validateClientReferenceId = async (id: number) => {
-  return validateReferenceId(prisma.client, id, 'clientezs')
+export const validateUserReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.user, id, 'usuario', include)
 }
 
-export const validateRoleReferenceId = async (id: number) => {
-  return validateReferenceId(prisma.role, id, 'rol')
+export const validateClientReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.client, id, 'clientes', include)
 }
 
-export const validateConfigurationTypeReferenceId = async (id: number) => {
-  return validateReferenceId(prisma.configurationType, id, 'tipo de configuración')
+export const validateRoleReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.role, id, 'rol', include)
 }
 
-export const validateConfigurationReferenceId = async (id: number) => {
-  return validateReferenceId(prisma.configuration, id, 'configuración')
+export const validateConfigurationTypeReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.configurationType, id, 'tipo de configuración', include)
+}
+
+export const validateConfigurationReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.configuration, id, 'configuración', include)
 }
 
 export const validateWorkOrderReferenceId = async (id: number, include?: any) => {

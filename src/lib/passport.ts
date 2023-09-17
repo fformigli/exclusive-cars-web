@@ -21,13 +21,9 @@ passport.use('local.signIn', new LocalStrategy({
       }
     })
 
-    console.log(user)
-    console.log('match?')
     if (!await matchPassword(password, user.password)) {
       return done(null, false, req.flash('message', 'Contraseña Inválida'));
     }
-
-    console.log('matcheo!')
 
     done(null, user, req.flash('success', 'Bienvenido, ' + user.fullName));
   } catch (e) {
@@ -46,6 +42,13 @@ passport.deserializeUser(async (id: number, done: any) => {
     const user: User = await prisma.user.findUniqueOrThrow({
       where: {
         id
+      },
+      include: {
+        Role: {
+          include: {
+            Permissions: true
+          }
+        }
       }
     })
 
@@ -54,26 +57,3 @@ passport.deserializeUser(async (id: number, done: any) => {
     done(e)
   }
 });
-
-
-// passport.use('local.signup', new LocalStrategy({
-//   usernameField: 'username',
-//   passwordField: 'password',
-//   passReqToCallback: true
-//
-// }, async (req, username, password, done) => {
-//   const { fullname, isAdmin } = req.body
-//   password = await helpers.encryptPassword(password);
-//
-//   pool.query('select * from users where username = $1', [username], (err, users) => {
-//     if (err) return done(null, false, req.flash('message', 'No se pudo conectar con la base de datos.'));
-//     if (users.rows.length > 0) return done(null, false, req.flash('message', 'El username ya existe'));
-//
-//     pool.query('insert into users(fullname, username, password, isadmin) '
-//       + 'values ($1, $2, $3, $4) returning id', [fullname, username, password, isAdmin == null ? 0 : isAdmin], (err, data) => {
-//       if (err) return done(err);
-//       return done(null, req.user);
-//     });
-//
-//   });
-// }));

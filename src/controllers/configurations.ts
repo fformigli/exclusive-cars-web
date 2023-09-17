@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { IConfigurationList } from "../lib/types";
 import { Configuration, ConfigurationType } from "@prisma/client";
 import {
+  blockSeedModifications,
   validateConfigurationReferenceId,
   validateConfigurationTypeReferenceId,
   validateReferenceNameAlreadyExists
@@ -103,7 +104,7 @@ export const deleteConfiguration = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params?.id, 10)
 
     const configuration = await validateConfigurationReferenceId(id)
-    checkNoModificationAllowedConfigurations(configuration)
+    blockSeedModifications(configuration)
 
     await prisma.configuration.delete({
       where: {
@@ -163,7 +164,8 @@ export const getDocumentTypes = async () => {
 export const getRoles = async (context: string) => {
   return prisma.role.findMany({
     where: {
-      context
+      context,
+      deletedAt: null
     }
   })
 }
@@ -174,10 +176,4 @@ export const getFuelLevels = async () => {
       configurationTypeId: CONFIGURATION_TYPES.FUEL_LEVELS
     }
   })
-}
-
-const checkNoModificationAllowedConfigurations = (configuration: Configuration) => {
-  if (configuration.seed) {
-    throw "No se puede modificar esta configuración. Es parte del sistema base."
-  }
 }

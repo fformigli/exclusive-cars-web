@@ -1,0 +1,42 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                {{#unless role.id}}
+                    <h3>Nuevo Rol</h3>
+                {{else}}
+                    <h3>Editando Rol</h3>
+                {{/unless}}
+            </div>
+            <div class="card-body">
+                <form action="/roles/{{role.id}}" method="POST" autocomplete="off">
+                    <div class="form-group">
+                        <label for="name">Nombre</label>
+                        <input type="text" name="name" placeholder="Nombre" class="form-control"
+                               autofocus required value="{{role.name}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Contexto</label>
+                        <select name="context" class="custom-select" required>
+                            {{#each roleContexts}}
+                                <option value="{{value}}" {{ selectedOption value ../role.context }}>{{label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="card">
+                        <fieldset>
+                            {{#each permissionsCategorized}}
+                                <legend>{{category}}</legend>
+                                {{#each permissions}}
+                                    <input type="checkbox" name="permissions" value="{{id}}" {{ checkedOption id ../../role.permissions}}> {{description}}<br>
+                                {{/each}}
+                            {{/each}}
+                        </fieldset>
+                    </div>
+                    {{> formButtons}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/js/validator.js"></script>

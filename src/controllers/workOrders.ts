@@ -216,8 +216,6 @@ export const editWorkOrderForm = async (req: Request, res: Response) => {
 
     const dataForm: IWorkOrderDataForm = await chargeFormCombos();
     dataForm.wo = await validateWorkOrderReferenceId(id, { include: { AssignedTo: true, Client: { include: { User: true } }, FuelState: true }})
-    console.log(dataForm.wo)
-
 
     res.render('work-orders/form.hbs', dataForm);
   } catch (err: any) {
