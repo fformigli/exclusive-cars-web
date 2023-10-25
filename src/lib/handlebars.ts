@@ -1,4 +1,6 @@
 import { timeAgo } from "./customTime";
+import { checkUserPermissions } from "./auth";
+
 const dateFormat = require('handlebars-dateformat');
 
 const helpers: any = {};
@@ -11,8 +13,12 @@ helpers.formatter = (timestamp: any, format: any) => {
 
 helpers.selectedOption = (a: string, b: string) => a == b ? "selected" : "";
 
-helpers.filetypeValidator = (a: string, b: string) => {
-  return a == b;
-}
+helpers.checkedOption = (a: number, b: string) =>
+  String(b)?.split(',').includes(String(a)) ? "checked" : ""
+
+helpers.filetypeValidator = (a: string, b: string) => a == b
+
+helpers.checkAccess = (userPermissions: any, requiredPermissions: any)=>
+  checkUserPermissions(userPermissions, requiredPermissions.split(',').map((rp: string) => +rp))
 
 export default helpers

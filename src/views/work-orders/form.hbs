@@ -5,136 +5,172 @@
                 {{#unless wo}}
                     <h3>Nueva Orden de Trabajo</h3>
                 {{else}}
-                    <h3>Editando orden de Trabajo ID: {{wo.id}}</h3>
-                    <div class="comment-by">Agregado el {{formatter created_at "DD/MM/YYYY HH:mm"}}</div>
+                    <h3>Editando orden de Trabajo #{{wo.id}}</h3>
+                    <div class="comment-by">Agregado el {{formatter wo.createdAt "DD/MM/YYYY HH:mm"}}</div>
                 {{/unless}}
             </div>
             <div class="card-body">
-                <form action="/work-orders/save/{{wo.id}}" method="POST" enctype="multipart/form-data">
+                <form action="/work-orders/{{wo.id}}" method="POST" enctype="multipart/form-data">
                     <div class="row">
-                        <div class="col-sm-6">  
-                            <dl>
-                                <dt><label for="client">Cliente:</label></dt>
-                                <dd>
-                                    <select name="client" class="custom-select">
-                                        {{#each clients}}
-                                            <option value="{{id}}" {{ selectedOption id ../wo.Client.id }}>{{User.fullName}}</option>
-                                        {{/each}}
-                                    </select>
-                                </dd>
-                                <dt><label for="vehiculo">Datos del Vehículo:</label></dt>
-                                <dd><input type="text" value="{{wo.vehiculo}}" class="form-control" name="vehiculo" placeholder="Marca/Modelo/Color"></dd>
-                                
-                                <dt><label for="assignee">Encargado:</label></dt>
-                                <dd>
-                                    <select name="assignee" class="custom-select">
-                                        {{#each employees}}
-                                            <option value="{{id}}" {{ selectedOption id ../wo.Assignee.id }}>{{fullName}}</option>
-                                        {{/each}}
-                                    </select>
-                                </dd>
-                            </dl>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Sucursal</label>
+                                <select name="workShopBranchId" class="custom-select" required>
+                                    {{#each branches}}
+                                        <option value="{{id}}" {{ selectedOption id ../wo.WorkShopBranch.id }}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="clientId">Cliente</label>
+                                <select name="clientId" class="custom-select">
+                                    {{#each clients}}
+                                        <option value="{{id}}" {{ selectedOption id
+                                                                                 ../wo.Client.id }}>{{User.fullName}} - CI: {{User.documentNumber}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicleInformation">Datos del Vehículo</label>
+                                <input type="text" value="{{wo.vehicleInformation}}" class="form-control" name="vehicleInformation"
+                                       placeholder="Marca/Modelo/Color">
+                            </div>
+                            <div class="form-group">
+                                <label for="assignedToId">Encargado</label>
+                                <select name="assignedToId" class="custom-select">
+                                    {{#each employees}}
+                                        <option value="{{id}}" {{ selectedOption id
+                                                                                 ../wo.AssignedTo.id }}>{{fullName}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </div>
                         <div class="col">
-                            <dl>
-                                <dt><label for="state">Estado Pedido:</label></dt>
-                                <dd>
-                                    <select name="state" class="custom-select">
-                                        {{#each workOrderStates}}
-                                            <option value="{{value}}"  {{ selectedOption value ../wo.state }}>{{label}}</option>
-                                        {{/each}}
-                                    </select>
-                                </dd>
-                                <dt><label for="telefono">Teléfono:</label></dt>
-                                <dd><input type="text" value="{{wo.telefono}}" class="form-control" name="telefono" placeholder="098X XXX XXX"></dd>
-                                <dt><label for="vinnro">VIN N°:</label></dt>
-                                <dd><input type="text" value="{{wo.vinnro}}" class="form-control" name="vinnro" placeholder=""></dd>
-                            </dl>
+                            <div class="form-group">
+                                <label for="state">Estado Pedido</label>
+                                <select name="state" class="custom-select">
+                                    {{#each workOrderStates}}
+                                        <option value="{{value}}"  {{ selectedOption value
+                                                                                     ../wo.state }}>{{label}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Teléfono</label>
+                                <input type="text" value="{{wo.contactPhone}}" class="form-control" name="contactPhone"
+                                       placeholder="098X XXX XXX">
+                            </div>
+                            <div class="form-group">
+                                <label for="vinNumber">VIN N°</label>
+                                <input type="text" value="{{wo.vinNumber}}" class="form-control" name="vinNumber"
+                                       placeholder="">
+                            </div>
                         </div>
                         <div class="col">
-                            <dl>
-                                <dt><label for="combustible">Estado Combustible:</label></dt>
-                                <dd>
-                                    <select name="combustible" class="custom-select">
-                                        {{#each fuelStates}}
-                                            <option value="{{id}}"  {{ selectedOption id ../wo.fuelState }}>{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </dd>
-                                <dt><label for="chapa">Chapa N°:</label></dt>
-                                <dd><input type="text" value="{{wo.chapa}}" class="form-control" name="chapa" placeholder="XXXX 999"></dd>
-                                <dt><label for="recorrido">mi/km</label></dt>
-                                <dd><input type="text" value="{{wo.recorrido}}" class="form-control" name="recorrido" placeholder="X00.000 km"></dd>
-                            </dl>
+                            <div class="form-group">
+                                <label for="fuelStateId">Estado Combustible</label>
+                                <select name="fuelStateId" class="custom-select">
+                                    {{#each fuelStates}}
+                                        <option value="{{id}}"  {{ selectedOption id
+                                                                                  ../wo.FuelState.id }}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="plate">Chapa N°</label>
+                                <input type="text" value="{{wo.plate}}" class="form-control" name="plate"
+                                       placeholder="XXXX 999">
+                            </div>
+                            <div class="form-group">
+                                <label for="mileage">mi/km</label>
+                                <input type="text" value="{{wo.mileage}}" class="form-control" name="mileage"
+                                       placeholder="X00.000 km">
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm">
-                            <dl>
-                                <dt>
-                                    Descripción del Trabajo
-                                </dt>
-                                <dd>
-                                    <textarea name="description"  class="form-control">{{wo.description}}</textarea>
-                                </dd>
-                            </dl>
+                            <div class="form-group-full">
+                                <label for="description">Descripción del Trabajo</label>
+                                <textarea name="description" class="form-control">{{wo.description}}</textarea>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         {{#each wof}}
                             {{#if (filetypeValidator filetype "img")}}
                                 <div class="col-sm-3">
-                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}" onclick="mostrarImagen('/uploads/{{filename}}')"/>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});" class="btn btn-danger btn-block" >
+                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
+                                         onclick="mostrarImagen('/uploads/{{filename}}')"/>
+                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                                            class="btn btn-danger btn-block">
                                         Borrar
                                     </button>
                                 </div>
                             {{/if}}
                             {{#if (filetypeValidator filetype "video")}}
                                 <div class="col-sm-3">
-                                    <video class="rounded float-left img-fluid" src="/uploads/{{filename}}" onclick="mostrarVideo('/uploads/{{filename}}')"></video>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});" class="btn btn-danger btn-block">
+                                    <video class="rounded float-left img-fluid" src="/uploads/{{filename}}"
+                                           onclick="mostrarVideo('/uploads/{{filename}}')"></video>
+                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                                            class="btn btn-danger btn-block">
                                         Borrar
-                                    </button>    
+                                    </button>
                                 </div>
                             {{/if}}
                             {{#if (filetypeValidator filetype "unknown")}}
                                 <div class="col-sm-3">
-                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}" alt="Este formato puede no mostrarse" onclick="mostrarImagen('/uploads/{{filename}}')"/>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});" class="btn btn-danger btn-block">
+                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
+                                         alt="Este formato puede no mostrarse"
+                                         onclick="mostrarImagen('/uploads/{{filename}}')"/>
+                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                                            class="btn btn-danger btn-block">
                                         Borrar
-                                    </button>    
+                                    </button>
                                 </div>
                             {{/if}}
                         {{/each}}
                     </div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-6">-->
+<!--                            <div class="form-group">-->
+<!--                                <label>Agregar Archivos</label>-->
+<!--                                <input type="file" name="archivos" id="archivos">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="row">
-                        <div class="col-sm-6">
-                            <dl>
-                                <dt>
-                                    Agregar Archivos
-                                </dt>
-                                <dd>
-                                    <input type="file" name="archivos" id="archivos">
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mx-auto" >
-                            {{> formButtons}}
-                        </div>
+                        {{> formButtons}}
                     </div>
                 </form>
-                
             </div>
         </div>
         <div class="card">
             <div class="row">
-                {{#each woc}}
+                <div class="card-body">
+                    <form action="/work-orders/add/budget/{{wo.id}}" method="get" target="_blank">
+                        <div class="row">
+                            <div class="col-sm-10">
+
+                            </div>
+                            <div class="col my-auto">
+                                <button class="btn btn-success float-right">
+                                    Agregar Presupuesto
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="row">
+                {{#each wo.WorkOrderComments}}
                     <div class="comment-box mx-auto">
                         {{comment}}
-                        <div class="comment-by">comentado por {{created_by}} el {{formatter created_at "DD/MM/YYYY HH:mm"}}</div>
+                        <div class="comment-by">comentado por {{CreatedBy.fullName}} el {{formatter createdAt
+                                                                                                    "DD/MM/YYYY HH:mm"}}</div>
                     </div>
                 {{/each}}
             </div>
@@ -143,14 +179,12 @@
                     <form action="/work-orders/add/comment/{{wo.id}}" method="POST">
                         <div class="row">
                             <div class="col-sm-10">
-                                <dl>
-                                    <dt>Comentario:</dt>
-                                    <dd>
-                                        <textarea name="comment" id="comment" class="form-control"></textarea>
-                                    </dd>
-                                </dl>
+                                <div>
+                                    <label>Comentario</label>
+                                    <textarea name="comment" id="comment" class="form-control"></textarea>
+                                </div>
                             </div>
-                            <div class="col my-auto" >
+                            <div class="col my-auto">
                                 <button class="btn btn-success float-right">
                                     Agregar Comentario
                                 </button>
@@ -163,42 +197,42 @@
         <div id="modal" class="modal" onclick="this.style.display='none'">
             <span class="w3-button hover-red xlarge display-topright">&times;</span>
             <div class="modal-content animate-zoom">
-            <img id="image_modal" src="" style="width:100%">
+                <img id="image_modal" src="" style="width100%">
             </div>
         </div>
         <div id="video_modal" class="modal">
             <span class="w3-button hover-red xlarge display-topright" onclick="cerrarVideo()">&times;</span>
             <div class="modal-content animate-zoom">
-            <video id="video_modal_i" src="" style="width:100%" controls></video>
+                <video id="video_modal_i" src="" style="width100%" controls></video>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-function eliminarArchivo(wo, id){
-    if(confirm('¿Esta seguro de que desea eliminar este archivo?'+ wo +" "+ id))
-        location.href = '/work-orders/delete/file/'+wo+'/'+id;
-    return false;
-}
+    function eliminarArchivo(wo, id) {
+        if (confirm('¿Esta seguro de que desea eliminar este archivo?' + wo + " " + id))
+            location.href = '/work-orders/delete/file/' + wo + '/' + id;
+        return false;
+    }
 
-function mostrarImagen(src){
-    let modal = document.getElementById('modal');
-    modal.style.display = 'block';
-    let img = document.getElementById('image_modal');
-    img.setAttribute('src', src);
-}
+    function mostrarImagen(src) {
+        let modal = document.getElementById('modal');
+        modal.style.display = 'block';
+        let img = document.getElementById('image_modal');
+        img.setAttribute('src', src);
+    }
 
-function mostrarVideo(src){
-    let modal = document.getElementById('video_modal');
-    modal.style.display = 'block';
-    let v = document.getElementById('video_modal_i');
-    v.setAttribute('src', src);
-}
+    function mostrarVideo(src) {
+        let modal = document.getElementById('video_modal');
+        modal.style.display = 'block';
+        let v = document.getElementById('video_modal_i');
+        v.setAttribute('src', src);
+    }
 
-function cerrarVideo(){
-    document.getElementById('video_modal').style.display='none'
-    document.getElementById('video_modal_i').setAttribute('src', '');
+    function cerrarVideo() {
+        document.getElementById('video_modal').style.display = 'none'
+        document.getElementById('video_modal_i').setAttribute('src', '');
 
-}
+    }
 </script>

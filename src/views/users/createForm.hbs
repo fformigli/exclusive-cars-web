@@ -5,48 +5,57 @@
                 <h3>Nuevo Usuario</h3>
             </div>
             <div class="card-body">
-                <form action="/users" method="POST" autocomplete="nope">
-                    <dl class="form-group">
-                        <dt>Nombre completo del usuario</dt>
-                        <dd>
-                            <input type="text" name="fullName" placeholder="Nombre Completo" class="form-control"
-                                   autofocus required value="{{fullName}}">
-                        </dd>
-                        <dt>Tipo de documento</dt>
-                        <dd>
-                            <select name="documentType" class="custom-select" required>
-                                {{#each documentTypes}}
-                                    <option value="{{id}}" {{ selectedOption id ../DocumentType }}>{{shortName}} - {{name}}</option>
-                                {{/each}}
-                            </select>
-                        </dd>
-                        <dt>Número de documento</dt>
-                        <dd>
-                            <input type="text" name="documentNumber" placeholder="1234567" class="form-control"
-                                   autocomplete="false" required value="{{documentNumber}}">
-                        </dd>
-                        <dt>Nickname</dt>
-                        <dd>
-                            <input type="text" name="username" placeholder="Nickname" class="form-control"
-                                   autocomplete="false" required value="{{username}}">
-                        </dd>
-                        <dt>Contraseña</dt>
-                        <dd>
-                            <input type="password" name="password" class="form-control" placeholder="Contraseña"
-                                   autocomplete="new-password" required value="{{password}}">
-                        </dd>
-                        <dt>Rol</dt>
-                        <dd>
-                            <select name="roleId" class="custom-select" required>
-                                {{#each roles}}
-                                    <option value="{{id}}" {{ selectedOption id ../Role.id }}>{{name}}</option>
-                                {{/each}}
-                            </select>
-                        </dd>
-                        <dd>
-                            {{> formButtons}}
-                        </dd>
-                    </dl>
+                <form action="/users" method="POST" autocomplete="off">
+                    <div class="form-group">
+                        <label>Nombre completo del usuario</label>
+                        <input type="text" name="fullName" placeholder="Nombre Completo" class="form-control"
+                               autofocus required value="{{fullName}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de documento</label>
+                        <select name="documentType" class="custom-select" required>
+                            {{#each documentTypes}}
+                                <option value="{{id}}" {{ selectedOption id ../DocumentType }}>{{shortName}}
+                                    - {{name}}</option>
+                            {{/each}}
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Número de documento</label>
+                        <input type="text" name="documentNumber" placeholder="1234567" class="form-control"
+                               autocomplete="false" required value="{{documentNumber}}">
+
+                    </div>
+                    <div class="form-group">
+                        <label>Nickname</label>
+                        <input type="text" name="username" placeholder="Nickname" class="form-control"
+                               autocomplete="false" required value="{{username}}">
+
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" name="password" class="form-control" placeholder="******"
+                               autocomplete="false" required value="{{password}}">
+
+                    </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select name="roleId" class="custom-select" required>
+                            {{#each roles}}
+                                <option value="{{id}}" {{ selectedOption id ../Role.id }}>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sucursal</label>
+                        <select name="workShopBranchId" class="custom-select" required>
+                            {{#each branches}}
+                                <option value="{{id}}" {{ selectedOption id ../WorkShopBranch.id }}>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    {{> formButtons}}
                 </form>
             </div>
         </div>

@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { IConfigurationList } from "../lib/types";
 import { Configuration, ConfigurationType } from "@prisma/client";
 import {
+  blockSeedModifications,
   validateConfigurationReferenceId,
   validateConfigurationTypeReferenceId,
   validateReferenceNameAlreadyExists
@@ -12,7 +13,8 @@ import { CONFIGURATION_TYPES } from "../lib/constants/general";
 
 const getCombosData = async () => {
   const dataForm: any = {
-    configurationTypes: await prisma.configurationType.findMany()
+    configurationTypes: await prisma.configurationType.findMany(),
+    cancelPath: '/configurations',
   }
 
   return dataForm
@@ -84,8 +86,7 @@ export const editConfigurationForm = async (req: Request, res: Response) => {
 
     const dataForm: any = {
       ...await getCombosData(),
-      ...configuration,
-      cancelPath: '/configurations',
+      ...configuration
     }
     console.log(dataForm)
 
@@ -103,7 +104,7 @@ export const deleteConfiguration = async (req: Request, res: Response) => {
     const id: number = parseInt(req.params?.id, 10)
 
     const configuration = await validateConfigurationReferenceId(id)
-    checkNoModificationAllowedConfigurations(configuration)
+    blockSeedModifications(configuration)
 
     await prisma.configuration.delete({
       where: {
@@ -163,7 +164,8 @@ export const getDocumentTypes = async () => {
 export const getRoles = async (context: string) => {
   return prisma.role.findMany({
     where: {
-      context
+      context,
+      deletedAt: null
     }
   })
 }
@@ -176,8 +178,6 @@ export const getFuelLevels = async () => {
   })
 }
 
-const checkNoModificationAllowedConfigurations = (configuration: Configuration) => {
-  if (configuration.seed) {
-    throw "No se puede modificar esta configuración. Es parte del sistema base."
-  }
+export const getWorkShopBranches = async () => {
+  return prisma.workShopBranch.findMany()
 }

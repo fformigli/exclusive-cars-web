@@ -17,7 +17,6 @@ export const listClients = async (req: Request, res: Response) => {
 
 export const addClientForm = async (req: Request, res: Response) => {
   const dataForm = {
-    roles: await getRoles('client'),
     documentTypes: await getDocumentTypes(),
     ...req.query,
     cancelPath: '/clients'
@@ -52,7 +51,10 @@ export const createClient = async (req: Request, res: Response) => {
         },
         phoneNumber,
         email,
-        ruc
+        ruc,
+        CreatedBy: {
+          connect: { id: req.user.id }
+        }
       }
     })
 

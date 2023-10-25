@@ -6,6 +6,7 @@ import workOrderRoutes from "./workOrder";
 import userRoutes from "./users";
 import clientRoutes from "./clients";
 import configurationRoutes from "./configurations"
+import roleRoutes from "./roles"
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use(homeRoutes)
 routes.use(userRoutes)
 routes.use(workOrderRoutes)
 routes.use(configurationRoutes)
+routes.use(roleRoutes)
 
 export default routes

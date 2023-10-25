@@ -99,6 +99,10 @@ table tbody tr {
     cursor: pointer
 }
 
+label {
+    font-weight: bold;
+}
+
 .comment-box {
     padding-left: 30px;
     width: 90%;
@@ -109,8 +113,10 @@ table tbody tr {
 
 .comment-by {
     text-align: end;
+    margin-top: 10px;
     padding-right: 30px;
     font-size: 12px;
+    font-weight: bold;
 }
 
 .container {
@@ -177,4 +183,26 @@ dt {
 
 .card-header {
     text-align: center !important;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-group-full {
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    width: 40%;
+    text-align: right;
+    padding: 10px;
+}
+
+.form-group * {
+    width: 50%;
+    padding: 5px;
 }

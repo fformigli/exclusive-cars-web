@@ -15,12 +15,12 @@
                         </div>
                         <div class="col-sm-4">
                             <dl>
-                                <dt><label for="encargado">Encargado:</label></dt>
+                                <dt><label for="assignedTo">Encargado:</label></dt>
                                 <dd>
-                                    <select name="encargado" class="custom-select">
+                                    <select name="assignedTo" class="custom-select">
                                         <option value=""></option>
                                         {{#each employees}}
-                                            <option value="{{id}}" {{ selectedOption id ../filter.encargado }}>{{fullName}}</option>
+                                            <option value="{{id}}" {{ selectedOption id ../filter.assignedTo }}>{{fullName}}</option>
                                         {{/each}}
                                     </select>
                                 </dd>
@@ -40,16 +40,15 @@
                             </dl>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row pb-4">
                         <div class="mx-auto" >
                             <button class="btn btn-success">
                                 Filtrar
                             </button>
                         </div>
                     </div>
-                    <div class="p-4"></div>
                 </form>
-                <div class="form-group">
+                <div class="pb-3">
                     <button type="button" onclick="location.href='/work-orders/add'" class="btn btn-success">
                         Nueva Orden de Trabajo
                     </button>
@@ -69,12 +68,12 @@
                             {{#each workOrders}}
                             <tr onclick="location.href='/work-orders/edit/{{id}}'">
                                 <td>{{id}}</td>
-                                <td>{{cliente}}</td>
-                                <td>{{vehiculo}}</td>
-                                <td>{{telefono}}</td>
-                                <td>{{formatter created_at "DD/MM/YYYY HH:mm"}}</td>
-                                <td>{{encargado}}</td>    
-                                <td>{{status}}</td>
+                                <td>{{Client.User.fullName}}</td>
+                                <td>{{vehicleInformation}}</td>
+                                <td>{{contactPhone}}</td>
+                                <td>{{formatter createdAt "DD/MM/YYYY HH:mm"}}</td>
+                                <td>{{AssignedTo.fullName}}</td>
+                                <td>{{stateLabel}}</td>
                             </tr>
                             {{else}}
                                 {{> noElements}}

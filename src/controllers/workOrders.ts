@@ -1,20 +1,29 @@
 import { Request, Response } from "express";
-import { Client, Configuration, User, WorkOrder } from "@prisma/client";
+import { Client, Configuration, User, WorkOrder, WorkShopBranch } from "@prisma/client";
 import { getEmployees } from "./users";
 import { IDataForm, IWorkOrderState } from "../lib/types";
 import { WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
 import prisma from "../lib/prisma";
-import { getFuelLevels } from "./configurations";
+import { getFuelLevels, getWorkShopBranches } from "./configurations";
 import { getClientList } from "./clients";
+import {
+  validateClientReferenceId,
+  validateConfigurationReferenceId,
+  validateUserReferenceId,
+  validateWorkOrderReferenceId, validateWorkShopBranchReferenceId
+} from "../lib/prisma/utils";
+import { getQueryString } from "../lib/helpers";
 
-// const fs = require('fs');
-// const path = require('path');
+// import fs from 'fs';
+// import path from 'path';
 
 interface IWorkOrderDataForm extends IDataForm {
   workOrderStates: IWorkOrderState[],
   employees: User[],
   fuelStates: Configuration[],
   clients: Client[]
+  branches: WorkShopBranch[]
+  wo?: any
 }
 
 interface IWorkOrderListDataForm {
@@ -24,11 +33,16 @@ interface IWorkOrderListDataForm {
   workOrders?: WorkOrder[]
 }
 
+interface WorkOrderListItem extends WorkOrder {
+  stateLabel?: string
+}
+
 async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
   const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
   const employees: User[] = await getEmployees()
   const fuelStates: Configuration[] = await getFuelLevels()
   const clients: Client[] = await getClientList()
+  const branches: WorkShopBranch[] = await getWorkShopBranches()
 
 
   return {
@@ -36,8 +50,18 @@ async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
     employees,
     fuelStates,
     clients,
+    branches,
     cancelPath: '/work-orders'
   }
+}
+
+const WORK_ORDER_DEFAULT_INCLUDES = {
+  AssignedTo: true,
+  Client: { include: { User: true } },
+  FuelState: true,
+  WorkOrderComments: { include: { CreatedBy: true } },
+  WorkShopBranch: true
+
 }
 
 const getWorkOrderStates = () => Object.entries(WORK_ORDER_STATE_TRANSLATE).reduce((wo: any, s: [string, string]) => {
@@ -63,12 +87,48 @@ export const list = async (req: Request, res: Response) => {
   try {
     let dataForm: IWorkOrderListDataForm = await getListCombos();
     dataForm.filter = req.query
-    console.log(dataForm.filter)
+
+    const where: any = {}
+    if (req.query?.search) {
+      where.Client = {
+        User: {
+          fullName: {
+            contains: req.query.search,
+            mode: 'insensitive'
+          }
+        }
+      }
+    }
+
+    if (req.query?.assignedTo) {
+      where.AssignedTo = {
+        id: +req.query.assignedTo
+      }
+    }
+
+    if (req.query?.state) {
+      where.state = +req.query.state
+    }
+    console.log(JSON.stringify({ where }, null, 2))
 
     dataForm.workOrders = await prisma.workOrder.findMany({
       orderBy: {
         id: 'desc'
-      }
+      },
+      include: {
+        AssignedTo: true,
+        Client: {
+          include: {
+            User: true
+          }
+        }
+      },
+      where
+    })
+
+    // traducimos
+    dataForm.workOrders?.forEach((wo: WorkOrderListItem) => {
+      wo.stateLabel = WORK_ORDER_STATE_TRANSLATE[wo.state] ?? wo.state
     })
 
     return res.render('work-orders/list.hbs', dataForm);
@@ -79,10 +139,9 @@ export const list = async (req: Request, res: Response) => {
   }
 };
 
-//
 export const createWorkOrderForm = async (req: Request, res: Response) => {
   try {
-    const dataForm: IWorkOrderDataForm  = await chargeFormCombos();
+    const dataForm: IWorkOrderDataForm = await chargeFormCombos();
 
     return res.render('work-orders/form.hbs', dataForm);
   } catch (err: any) {
@@ -91,121 +150,182 @@ export const createWorkOrderForm = async (req: Request, res: Response) => {
     return res.redirect('/profile');
   }
 };
-//
-// export const saveNew = async (req: Request, res: Response) => {
-//   const {
-//     cliente,
-//     vehiculo,
-//     encargado,
-//     status,
-//     telefono,
-//     vinnro,
-//     combustible,
-//     chapa,
-//     recorrido,
-//     description
-//   } = req.body;
-//
-//   // intentamos crear la orden
-//   try {
-//     // creamos la orden de trabajo
-//     const sql = 'insert into work_orders '
-//       + '(cliente, vehiculo, encargado, statusid, fuelid, telefono, chapa, vinnro, recorrido, description, created_by) '
-//       + 'values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id';
-//
-//     const wo = await pool.query(sql, [cliente, vehiculo, encargado, status, combustible, telefono, chapa, vinnro, recorrido, description, req.user.id]);
-//
-//     // si tiene archivos, agregamos
-//     if (req.file) {
-//       var ext = path.extname(req.file.originalname).toLowerCase();
-//       let filetype = 'img';
-//       if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg')
-//         filetype = 'video';
-//
-//       await pool.query('insert into work_order_files (work_order, filename, filetype) values ($1, $2, $3)', [wo.rows[0].id, req.file.filename, filetype]);
-//     }
-//
-//     req.flash('success', 'Se agregó la orden');
-//     res.redirect('/work-orders');
-//
-//   } catch (err: any) {
-//     console.error(err);
-//     req.flash('message', 'Error: ' + err.message);
-//     res.redirect('/work-orders/add');
-//   }
-// };
-//
-// export const edit = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const dataForm: any = await chargeCombos();
-//
-//   try {
-//     // obtenemos el wo
-//     const wo = await pool.query('select * from work_orders where id = $1', [id]);
-//     dataForm.wo = wo.rows[0];
-//
-//     const wof = await pool.query('select * from work_order_files where work_order = $1 order by id', [id]);
-//     dataForm.wof = wof.rows;
-//
-//     const woc = await pool.query('select c.comment, u.fullname as created_by, c.created_at from work_order_comments c, users u where work_order = $1 and c.created_by = u.id order by c.id', [id]);
-//     dataForm.woc = woc.rows;
-//
-//     res.render('work-orders/form.hbs', dataForm);
-//
-//   } catch (err: any) {
-//     console.error(err);
-//     req.flash('message', 'Error: ' + err.message);
-//     res.redirect('/work-orders');
-//   }
-// };
-//
-// export const saveUpdate = async (req: Request, res: Response) => {
-//   const {
-//     cliente,
-//     vehiculo,
-//     encargado,
-//     status,
-//     telefono,
-//     vinnro,
-//     combustible,
-//     chapa,
-//     recorrido,
-//     description
-//   } = req.body;
-//   const { id } = req.params;
-//
-//   console.log(description);
-//
-//   try {
-//     // actualizamos la orden de trabajo
-//     const sql = 'update work_orders'
-//       + ' set cliente = $1, vehiculo = $2, encargado = $3, statusid = $4, fuelid = $5, telefono = $6, chapa = $7, vinnro = $8,'
-//       + ' recorrido = $9, description = $10'
-//       + ' where  id = $11';
-//
-//     await pool.query(sql, [cliente, vehiculo, encargado, status, combustible, telefono, chapa, vinnro, recorrido, description, id]);
-//
-//     // si tiene archivos, agregamos
-//     if (req.file) {
-//       var ext = path.extname(req.file.originalname).toLowerCase();
-//       let filetype = 'unknown';
-//       if (ext == '.png' || ext == '.jpg' || ext == '.gif' || ext == '.jpeg')
-//         filetype = 'img';
-//       if (ext == '.avi' || ext == '.mp4' || ext == '.wmv' || ext == '.wma')
-//         filetype = 'video';
-//
-//       await pool.query('insert into work_order_files (work_order, filename, filetype) values ($1, $2, $3)', [id, req.file.filename, filetype]);
-//     }
-//
-//     req.flash('success', 'Se actualizó la orden');
-//
-//   } catch (err: any) {
-//     console.error(err);
-//     req.flash('message', 'Error: ' + err.message);
-//   }
-//   res.redirect('/work-orders/edit/' + id);
-// };
-//
+
+export const createWorkOrder = async (req: Request, res: Response) => {
+  const {
+    clientId,
+    vehicleInformation,
+    assignedToId,
+    state,
+    contactPhone,
+    vinNumber,
+    fuelStateId,
+    plate,
+    mileage,
+    description,
+    workShopBranchId
+  } = req.body;
+
+  try {
+    // creamos la orden de trabajo
+    const client = await validateClientReferenceId(+clientId)
+    const assignedTo: User = await validateUserReferenceId(+assignedToId, { WorkShopBranch: true })
+    const fuelState: Configuration = await validateConfigurationReferenceId(+fuelStateId)
+    const workShopBranch: WorkShopBranch = await validateWorkShopBranchReferenceId(+workShopBranchId)
+
+    if(assignedTo.workShopBranchId !== workShopBranch.id) {
+      throw 'El encargado no es de la sucursal seleccionada'
+    }
+
+    const wo = await prisma.workOrder.create({
+      data: {
+        vehicleInformation,
+        state: +state,
+        contactPhone,
+        vinNumber,
+        plate,
+        mileage: +mileage,
+        description,
+        Client: {
+          connect: {
+            id: client.id
+          }
+        },
+        AssignedTo: {
+          connect: {
+            id: assignedTo.id
+          }
+        },
+        FuelState: {
+          connect: {
+            id: fuelState.id
+          }
+        },
+        CreatedBy: {
+          connect: {
+            id: req.user.id
+          }
+        },
+        WorkShopBranch: {
+          connect: {
+            id: workShopBranch.id
+          }
+        }
+      }
+    })
+
+    // si tiene archivos, agregamos
+    // if (req.file) {
+    //   const ext = path.extname(req.file.originalname).toLowerCase();
+    //   let filetype = 'img';
+    //   if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg')
+    //     filetype = 'video';
+    //
+    //   // await pool.query('insert into work_order_files (work_order, filename, filetype) values ($1, $2, $3)', [wo.rows[0].id, req.file.filename, filetype]);
+    // }
+
+    req.flash('success', 'Se agregó la orden');
+    res.redirect(`/work-orders/edit/${wo.id}`);
+
+  } catch (err: any) {
+    console.error(err);
+    req.flash('message', 'Error: ' + (err.message || err));
+    const query = getQueryString(req.body)
+
+    console.log({ query })
+
+    res.redirect(`/work-orders/add?${query}`);
+  }
+};
+
+export const editWorkOrderForm = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params?.id, 10)
+
+    const dataForm: IWorkOrderDataForm = await chargeFormCombos();
+    dataForm.wo = await validateWorkOrderReferenceId(id, WORK_ORDER_DEFAULT_INCLUDES)
+    console.log(dataForm.wo)
+
+    res.render('work-orders/form.hbs', dataForm);
+  } catch (err: any) {
+    console.error(err);
+    req.flash('message', 'Error: ' + err.message);
+    res.redirect('/work-orders');
+  }
+};
+
+
+export const updateWorkOrder = async (req: Request, res: Response) => {
+  const id: number = parseInt(req.params?.id, 10)
+  const {
+    clientId,
+    vehicleInformation,
+    assignedToId,
+    state,
+    contactPhone,
+    vinNumber,
+    fuelStateId,
+    plate,
+    mileage,
+    description,
+    workShopBranchId
+  } = req?.body || {}
+
+  try {
+    await validateWorkOrderReferenceId(id)
+    const client = await validateClientReferenceId(+clientId)
+    const assignedTo: User = await validateUserReferenceId(+assignedToId)
+    const fuelState: Configuration = await validateConfigurationReferenceId(+fuelStateId)
+    const workShopBranch: WorkShopBranch = await validateWorkShopBranchReferenceId(+workShopBranchId)
+
+    if(assignedTo.workShopBranchId !== workShopBranch.id) {
+      throw 'El encargado no es de la sucursal seleccionada'
+    }
+
+    await prisma.workOrder.update({
+      where: { id },
+      data: {
+        vehicleInformation,
+        state: +state,
+        contactPhone,
+        vinNumber,
+        plate,
+        mileage: +mileage,
+        description,
+        Client: {
+          connect: {
+            id: client.id
+          }
+        },
+        AssignedTo: {
+          connect: {
+            id: assignedTo.id
+          }
+        },
+        FuelState: {
+          connect: {
+            id: fuelState.id
+          }
+        },
+        WorkShopBranch: {
+          connect: {
+            id: workShopBranch.id
+          }
+        }
+      }
+    })
+
+    req.flash('success', 'Se modificó la orden');
+    res.redirect(`/work-orders/edit/${id}`);
+
+  } catch (e: any) {
+    console.log(e)
+    req.flash('message', e.message || e)
+    const query = getQueryString(req.body)
+    return res.redirect(`/work-orders/edit/${id}?${query}`);
+  }
+}
+
 // export const deleteFiles = async (req: Request, res: Response) => {
 //   const { wo, id } = req.params;
 //
@@ -227,20 +347,41 @@ export const createWorkOrderForm = async (req: Request, res: Response) => {
 //   res.redirect('/work-orders/edit/' + wo);
 //
 // };
-//
-// export const addComment = async (req: Request, res: Response) => {
-//   const { wo } = req.params
-//   const { comment } = req.body
-//
-//   try {
-//     await pool.query('insert into work_order_comments (work_order, comment, created_by) ' +
-//       'values ($1, $2, $3)', [wo, comment, req.user.id])
-//
-//     req.flash('success', 'Comentario agregado');
-//
-//   } catch (err: any) {
-//     console.error(err)
-//     req.flash('message', 'Error: ' + err.message)
-//   }
-//   res.redirect('/work-orders/edit/' + wo);
-// };
+
+export const addComment = async (req: Request, res: Response) => {
+  const id: number = parseInt(req.params?.id, 10)
+  const { comment } = req.body
+
+  try {
+    if (!comment) {
+      throw 'El comentario no puede estar vacío'
+    }
+
+    await validateWorkOrderReferenceId(id, WORK_ORDER_DEFAULT_INCLUDES)
+
+    await prisma.workOrderComment.create({
+      data: {
+        WorkOrder: {
+          connect: {
+            id
+          }
+        },
+        comment,
+        CreatedBy: {
+          connect: {
+            id: req.user.id
+          }
+        }
+      }
+    })
+
+
+    req.flash('success', 'Comentario agregado');
+    res.redirect(`/work-orders/edit/${id}`);
+  } catch (err: any) {
+    console.error(err)
+    const query = getQueryString(req.body)
+    req.flash('message', 'Error: ' + err.message)
+    res.redirect(`/work-orders/edit/${id}?${query}`);
+  }
+};

@@ -17,8 +17,8 @@ export const getQueryString = (body: any) => {
 
   let i: number = 0
   let query = ''
-  for(const key of keys) {
-    if(i>0) {
+  for (const key of keys) {
+    if (i > 0) {
       query += '&'
     }
 
