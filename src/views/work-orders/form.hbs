@@ -5,7 +5,7 @@
                 {{#unless wo}}
                     <h3>Nueva Orden de Trabajo</h3>
                 {{else}}
-                    <h3>Editando orden de Trabajo ID {{wo.id}}</h3>
+                    <h3>Editando orden de Trabajo #{{wo.id}}</h3>
                     <div class="comment-by">Agregado el {{formatter wo.createdAt "DD/MM/YYYY HH:mm"}}</div>
                 {{/unless}}
             </div>
@@ -13,6 +13,15 @@
                 <form action="/work-orders/{{wo.id}}" method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Sucursal</label>
+                                <select name="workShopBranchId" class="custom-select" required>
+                                    {{#each branches}}
+                                        <option value="{{id}}" {{ selectedOption id ../wo.WorkShopBranch.id }}>{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
                             <div class="form-group">
                                 <label for="clientId">Cliente</label>
                                 <select name="clientId" class="custom-select">
@@ -123,28 +132,45 @@
                             {{/if}}
                         {{/each}}
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Agregar Archivos</label>
-                                <input type="file" name="archivos" id="archivos">
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-6">-->
+<!--                            <div class="form-group">-->
+<!--                                <label>Agregar Archivos</label>-->
+<!--                                <input type="file" name="archivos" id="archivos">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="row">
                         {{> formButtons}}
                     </div>
                 </form>
-
             </div>
         </div>
         <div class="card">
             <div class="row">
-                {{#each woc}}
+                <div class="card-body">
+                    <form action="/work-orders/add/budget/{{wo.id}}" method="get" target="_blank">
+                        <div class="row">
+                            <div class="col-sm-10">
+
+                            </div>
+                            <div class="col my-auto">
+                                <button class="btn btn-success float-right">
+                                    Agregar Presupuesto
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="row">
+                {{#each wo.WorkOrderComments}}
                     <div class="comment-box mx-auto">
                         {{comment}}
-                        <div class="comment-by">comentado por {{created_by}} el {{formatter created_at
-                                                                                            "DD/MM/YYYY HHmm"}}</div>
+                        <div class="comment-by">comentado por {{CreatedBy.fullName}} el {{formatter createdAt
+                                                                                                    "DD/MM/YYYY HH:mm"}}</div>
                     </div>
                 {{/each}}
             </div>

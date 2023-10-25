@@ -177,3 +177,7 @@ export const getFuelLevels = async () => {
     }
   })
 }
+
+export const getWorkShopBranches = async () => {
+  return prisma.workShopBranch.findMany()
+}

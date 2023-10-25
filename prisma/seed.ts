@@ -7,6 +7,14 @@ const createMany = async (model: any, list: any[]) => {
 }
 
 async function main() {
+  // add branches
+  const branchesToCreate: any[] = [
+    { name: '25 de mayo', address: '25 de mayo 123', phoneNumber: '0983 265 381' },
+    { name: 'Encarnacion', address: 'Encarnacion 123', phoneNumber: '0983 265 381' }
+  ]
+
+  await createMany(prisma.workShopBranch, branchesToCreate)
+
   // add configuration types
   const configurationTypesToCreate: any[] = [
     { name: 'DOCUMENT_TYPES', description: 'Tipos de documentos personales', translate: 'Tipos de documento' },
@@ -89,7 +97,11 @@ async function main() {
         connect: {
           id: 1
         }
+      },
+      WorkShopBranch: {
+        connect: { id: 1}
       }
+
     }
   })
 }

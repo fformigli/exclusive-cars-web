@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model WorkShopBranch {
+  id          BigInt      @id @default(autoincrement())
+  name        String
+  address     String
+  phoneNumber String
+  User        User[]
+  WorkOrder   WorkOrder[]
+  deletedAt   DateTime?
+
+  @@map("work_shop_branches")
+}
+
 model Role {
   id          Int          @id @default(autoincrement())
   name        String
@@ -30,23 +42,28 @@ model Permission {
 }
 
 model User {
-  id               Int           @id @default(autoincrement())
-  DocumentType     Configuration @relation(fields: [documentTypeId], references: [id])
+  id               Int                @id @default(autoincrement())
+  DocumentType     Configuration      @relation(fields: [documentTypeId], references: [id])
   documentTypeId   Int
   documentNumber   String
   username         String
   fullName         String
   password         String
-  Role             Role          @relation(fields: [roleId], references: [id])
+  Role             Role               @relation(fields: [roleId], references: [id])
   roleId           Int
-  type             Int           @default(1)
+  type             Int                @default(1)
   createdBy        Int?
-  createdAt        DateTime      @default(now())
+  createdAt        DateTime           @default(now())
   deletedAt        DateTime?
   Client           Client?
-  WorkOrder        WorkOrder[]   @relation("AssignedTo")
-  WorkOrderCreated WorkOrder[]   @relation("CreatedBy")
-  ClientsCreated   Client[]      @relation("CreatedBy")
+  WorkOrder        WorkOrder[]        @relation("AssignedTo")
+  WorkOrderCreated WorkOrder[]        @relation("CreatedBy")
+  ClientsCreated   Client[]           @relation("CreatedBy")
+  WorkOrderComment WorkOrderComment[]
+  WorkShopBranch   WorkShopBranch     @relation(fields: [workShopBranchId], references: [id])
+  workShopBranchId BigInt             @default(1)
+  Budget           Budget[]
+  BudgetComments   BudgetComments[]
 
   @@map("users")
 }
@@ -63,6 +80,7 @@ model Client {
   createdAt   DateTime    @default(now())
   deletedAt   DateTime?
   WorkOrder   WorkOrder[]
+  Budget      Budget[]
 
   @@map("clients")
 }
@@ -94,27 +112,117 @@ model ConfigurationType {
 }
 
 model WorkOrder {
-  id                 Int           @id @default(autoincrement())
-  Client             Client        @relation(fields: [clientId], references: [id])
+  id                 Int                @id @default(autoincrement())
+  Client             Client             @relation(fields: [clientId], references: [id])
   state              Int
   contactPhone       String
-  FuelState          Configuration @relation(fields: [fuelStateId], references: [id])
+  FuelState          Configuration      @relation(fields: [fuelStateId], references: [id])
   fuelStateId        Int
   vinNumber          String
   mileage            Int
   clientId           Int
   vehicleInformation String
   plate              String
-  AssignedTo         User          @relation("AssignedTo", fields: [userId], references: [id])
+  AssignedTo         User               @relation("AssignedTo", fields: [userId], references: [id])
   userId             Int
   description        String
-  CreatedBy          User          @relation("CreatedBy", fields: [createdById], references: [id])
+  CreatedBy          User               @relation("CreatedBy", fields: [createdById], references: [id])
   createdById        Int
-  createdAt          DateTime      @default(now())
+  createdAt          DateTime           @default(now())
   deletedAt          DateTime?
+  WorkOrderComments  WorkOrderComment[]
+  WorkShopBranch     WorkShopBranch     @relation(fields: [workShopBranchId], references: [id])
+  workShopBranchId   BigInt
+  Budget             Budget[]
 
   @@map("work_orders")
 }
 
-// todo workorderfiles
-// todo workordercomments
+model WorkOrderComment {
+  id          BigInt    @id @default(autoincrement())
+  WorkOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  workOrderId Int
+  comment     String
+  createdAt   DateTime  @default(now())
+  CreatedBy   User      @relation(fields: [createdById], references: [id])
+  createdById Int
+
+  @@map("work_order_comments")
+}
+
+model Supplier {
+  id               BigInt    @id @default(autoincrement())
+  name             String
+  description      String
+  phoneNumber      String
+  address          String
+  otherContactInfo String
+  Product          Product[]
+  deletedAt        DateTime?
+}
+
+model Product {
+  id           BigInt         @id @default(autoincrement())
+  name         String
+  description  String
+  quantity     Int
+  cost         Int
+  Supplier     Supplier?      @relation(fields: [supplierId], references: [id])
+  supplierId   BigInt?
+  category     String
+  deletedAt    DateTime?
+  BudgetDetail BudgetDetail[]
+}
+
+model Service {
+  id           BigInt         @id @default(autoincrement())
+  name         String
+  description  String
+  BudgetDetail BudgetDetail[]
+  price        Int
+}
+
+model Budget {
+  id             BigInt           @id @default(autoincrement())
+  WorkOrder      WorkOrder?       @relation(fields: [workOrderId], references: [id])
+  workOrderId    Int?
+  state          Int
+  BudgetDetail   BudgetDetail[]
+  CreatedBy      User             @relation(fields: [createdById], references: [id])
+  createdById    Int
+  createdAt      DateTime
+  deletedAt      DateTime
+  BudgetComments BudgetComments[]
+  ApprovedBy     Client?          @relation(fields: [clientId], references: [id])
+  clientId       Int?
+  approvedAt     DateTime?
+  rejectedAt     DateTime?
+
+  @@map("budgets")
+}
+
+model BudgetDetail {
+  id             BigInt   @id @default(autoincrement())
+  Budget         Budget   @relation(fields: [budgetId], references: [id])
+  budgetId       BigInt
+  concept        String
+  quantity       Int
+  unitaryPrice   Int
+  Product        Product? @relation(fields: [productId], references: [id])
+  productId      BigInt?
+  Service        Service? @relation(fields: [serviceId], references: [id])
+  serviceId      BigInt?
+  additionalData String
+
+  @@map("budget_details")
+}
+
+model BudgetComments {
+  id          BigInt   @id @default(autoincrement())
+  Budget      Budget   @relation(fields: [budgetId], references: [id])
+  budgetId    BigInt
+  comment     String
+  createdAt   DateTime
+  CreatedBy   User     @relation(fields: [createdById], references: [id])
+  createdById Int
+}

@@ -41,7 +41,7 @@ const validateRoleNotInUse = async (id: number) => {
     }
   })
 
-  if(user) {
+  if (user) {
     throw 'Hay usuarios usando este rol'
   }
 }
@@ -86,7 +86,7 @@ export const getRoleForm = async (req: Request, res: Response) => {
     }
 
     if (id) { // estamos editando
-      dataForm.role = await validateRoleReferenceId(id, { include: { Permissions: true } })
+      dataForm.role = await validateRoleReferenceId(id, { Permissions: true })
       dataForm.role.permissions = dataForm.role.Permissions.reduce((permissions: number[], permission: Permission) => {
         permissions.push(permission.id)
         return permissions
@@ -107,9 +107,9 @@ export const createRole = async (req: Request, res: Response) => {
     console.log(permissions)
     await validateReferenceNameAlreadyExists(prisma.role, { name }, 'un role', 'este nombre')
 
-    if(!permissions) {
+    if (!permissions) {
       throw 'Debe seleccionar al menos un permiso'
-    } else if(!Array.isArray(permissions)) {
+    } else if (!Array.isArray(permissions)) {
       permissions = [permissions]
     }
 
@@ -143,9 +143,9 @@ export const updateRole = async (req: Request, res: Response) => {
 
     console.log(permissions)
 
-    if(!permissions) {
+    if (!permissions) {
       throw 'Debe seleccionar al menos un permiso'
-    } else if(!Array.isArray(permissions)) {
+    } else if (!Array.isArray(permissions)) {
       permissions = [permissions]
     }
 

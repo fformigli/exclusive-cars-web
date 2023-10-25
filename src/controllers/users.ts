@@ -7,7 +7,7 @@ import {
   validateUserReferenceId
 } from "../lib/prisma/utils";
 import { encryptPassword, getQueryString } from "../lib/helpers";
-import { getDocumentTypes, getRoles } from "./configurations";
+import { getDocumentTypes, getRoles, getWorkShopBranches } from "./configurations";
 import { USER_TYPES } from "../lib/constants/general";
 
 export const users = async (req: Request, res: Response) => {
@@ -50,6 +50,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const userForm = async (req: Request, res: Response) => {
   const dataForm = {
     roles: await getRoles('user'),
+    branches: await getWorkShopBranches(),
     documentTypes: await getDocumentTypes(),
     ...req.query,
     cancelPath: '/users'
@@ -60,7 +61,9 @@ export const userForm = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    let { username, password, fullName, roleId, documentType, documentNumber } = req.body
+    let {
+      username, password, fullName, roleId, documentType, documentNumber, workShopBranchId
+    } = req.body
     await validateReferenceNameAlreadyExists(prisma.user, { username }, 'un usuario', 'este nickname')
     const role = await validateRoleReferenceId(+roleId)
 
@@ -78,7 +81,12 @@ export const createUser = async (req: Request, res: Response) => {
         },
         documentNumber: documentNumber,
         type: 1, // tipo usuario
-        username
+        username,
+        WorkShopBranch: {
+          connect: {
+            id: +workShopBranchId
+          }
+        }
       }
     })
 
@@ -104,7 +112,11 @@ export const editUserForm = async (req: Request, res: Response) => {
       Role: {
         id: user.roleId
       },
+      WorkShopBranch: {
+        id: user.workShopBranchId
+      },
       roles: await getRoles('user'),
+      branches: await getWorkShopBranches(),
       documentTypes: await getDocumentTypes(),
       documentTypeId: user.documentTypeId,
       documentNumber: user.documentNumber,
@@ -126,7 +138,7 @@ export const editUserForm = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params?.id, 10)
-    const { username, fullName, roleId, documentType, documentNumber } = req.body
+    const { username, fullName, roleId, documentType, documentNumber, workShopBranchId } = req.body
 
     const user = await validateUserReferenceId(id)
     const role = await validateRoleReferenceId(+roleId)
@@ -147,6 +159,11 @@ export const updateUser = async (req: Request, res: Response) => {
         },
         documentNumber,
         username,
+        WorkShopBranch: {
+          connect: {
+            id: +workShopBranchId
+          }
+        }
       }
     })
 
@@ -175,6 +192,9 @@ export const getEmployees = async () => {
   const employees: User[] = await prisma.user.findMany({
     where: {
       type: USER_TYPES.EMPLOYEE
+    },
+    include: {
+      WorkShopBranch: true
     }
   })
 

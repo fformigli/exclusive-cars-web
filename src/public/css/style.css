@@ -113,8 +113,10 @@ label {
 
 .comment-by {
     text-align: end;
+    margin-top: 10px;
     padding-right: 30px;
     font-size: 12px;
+    font-weight: bold;
 }
 
 .container {

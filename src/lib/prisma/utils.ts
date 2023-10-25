@@ -1,14 +1,20 @@
 import prisma from "./index";
 
 export const validateReferenceId = async (model: any, id: number, modelName: string = 'registro', include?: any) => {
-  console.log(id)
-  const data = await model.findFirst({
+  if(!id){
+    throw `El identificador de ${modelName} es requerido`
+  }
+  const query: any = {
     where: {
       id,
       deletedAt: null
     },
-    ...include
-  })
+  }
+
+  if(include) {
+    query.include = include
+  }
+  const data = await model.findFirst(query)
 
   if (!data) {
     throw `No se encuentra ningún ${modelName} con el identificador enviado.`
@@ -71,4 +77,8 @@ export const validateConfigurationReferenceId = async (id: number, include?: any
 
 export const validateWorkOrderReferenceId = async (id: number, include?: any) => {
   return validateReferenceId(prisma.workOrder, id, 'orden de trabajo', include)
+}
+
+export const validateWorkShopBranchReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.workShopBranch, id, 'sucursal', include)
 }
