@@ -69,18 +69,19 @@ model User {
 }
 
 model Client {
-  id          Int         @id @default(autoincrement())
-  User        User        @relation(fields: [userId], references: [id])
-  userId      Int         @unique
-  phoneNumber String
-  ruc         String
-  email       String
-  CreatedBy   User        @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById Int
-  createdAt   DateTime    @default(now())
-  deletedAt   DateTime?
-  WorkOrder   WorkOrder[]
-  Budget      Budget[]
+  id             Int         @id @default(autoincrement())
+  User           User        @relation(fields: [userId], references: [id])
+  userId         Int         @unique
+  phoneNumber    String
+  ruc            String
+  email          String
+  CreatedBy      User        @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById    Int
+  createdAt      DateTime    @default(now())
+  deletedAt      DateTime?
+  WorkOrder      WorkOrder[]
+  Budget         Budget[]    @relation("Client")
+  BudgetFeedback Budget[]    @relation("ClientFeedback")
 
   @@map("clients")
 }
@@ -183,20 +184,21 @@ model Service {
 }
 
 model Budget {
-  id             BigInt           @id @default(autoincrement())
-  WorkOrder      WorkOrder?       @relation(fields: [workOrderId], references: [id])
-  workOrderId    Int?
-  state          Int
-  BudgetDetail   BudgetDetail[]
-  CreatedBy      User             @relation(fields: [createdById], references: [id])
-  createdById    Int
-  createdAt      DateTime
-  deletedAt      DateTime
-  BudgetComments BudgetComments[]
-  ApprovedBy     Client?          @relation(fields: [clientId], references: [id])
-  clientId       Int?
-  approvedAt     DateTime?
-  rejectedAt     DateTime?
+  id                BigInt           @id @default(autoincrement())
+  WorkOrder         WorkOrder?       @relation(fields: [workOrderId], references: [id])
+  Client            Client           @relation("Client", fields: [clientId], references: [id])
+  clientId          Int
+  workOrderId       Int?
+  state             Int
+  BudgetDetail      BudgetDetail[]
+  CreatedBy         User             @relation(fields: [createdById], references: [id])
+  createdById       Int
+  createdAt         DateTime         @default(now())
+  deletedAt         DateTime?
+  BudgetComments    BudgetComments[]
+  FeedbackBy        Client?          @relation("ClientFeedback", fields: [feedbackById], references: [id])
+  feedbackById      Int?
+  feedbackTimestamp DateTime?
 
   @@map("budgets")
 }

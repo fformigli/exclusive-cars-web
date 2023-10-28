@@ -1,0 +1,23 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                {{#unless budget}}
+                    <h3>Hoja de Presupuesto</h3>
+                {{else}}
+                    <h3>Editando Hoja de Presupuesto #{{budget.id}}</h3>
+                    <div class="comment-by">Agregado el {{formatter budget.createdAt "DD/MM/YYYY HH:mm"}}</div>
+                    <h5>{{translateLabel BUDGET_STATES_TRANSLATE budget.state}}</h5>
+                {{/unless}}
+                Cliente: {{ budget.Client.User.fullName }}
+            </div>
+            <div class="card-body">
+                <div class="w-25 ml-auto pt-5 form-group">
+                    <button type="button" class="btn btn-danger btn-block" onclick="location.href='{{ cancelPath }}'">
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

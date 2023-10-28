@@ -1,0 +1,35 @@
+<div class="card">
+    <div class="row">
+        <div class="card-body">
+            <form action="/work-orders/{{wo.id}}/budgets" method="get">
+                <div class="row">
+                    {{#unless latestBudget}}
+                        <div class="col-sm-10">
+
+                        </div>
+                        <div class="col my-auto">
+                            <button class="btn btn-success float-right">
+                                Agregar Presupuesto
+                            </button>
+                        </div>
+                    {{else}}
+                        <div class="col-sm-7 my-auto">
+                            <h5>Presupuesto #{{latestBudget.id}} {{translateLabel BUDGET_STATES_TRANSLATE latestBudget.state}}</h5>
+                            <p>Agregado el {{formatter
+                                    latestBudget.createdAt
+                                    "DD/MM/YYYY HH:mm"}}</p>
+                        </div>
+                        <div class="col-sm-3 my-auto">
+                            <h3>Total: X Gs.</h3>
+                        </div>
+                        <div class="col my-auto">
+                            <button class="btn btn-success float-right">
+                                Modificar Presupuesto
+                            </button>
+                        </div>
+                    {{/unless}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

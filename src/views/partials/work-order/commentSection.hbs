@@ -1,0 +1,31 @@
+<div class="card">
+        {{#each wo.WorkOrderComments}}
+    <div class="row">
+            <div class="comment-box mx-auto">
+                {{comment}}
+                <div class="comment-by">comentado por {{CreatedBy.fullName}} el {{formatter createdAt
+                                                                                            "DD/MM/YYYY HH:mm"}}</div>
+            </div>
+    </div>
+        {{/each}}
+    {{#if wo.id}}
+        <div class="row">
+            <div class="card-body">
+                <form action="/work-orders/add/comment/{{wo.id}}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div>
+                                <textarea name="comment" id="comment" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="col my-auto">
+                            <button class="btn btn-success float-right">
+                                Agregar Comentario
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {{/if}}
+</div>

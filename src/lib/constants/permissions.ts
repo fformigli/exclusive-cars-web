@@ -30,4 +30,7 @@ export const PERMISSIONS: { [key: string]: number} = Object.freeze({
   CREATE_ROLES: 24,
   MODIFY_ROLES: 25,
   DELETE_ROLES: 26,
+
+  ADMIN_BUDGETS: 27,
+  CREATE_BUDGETS: 28
 })

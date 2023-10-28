@@ -18,7 +18,11 @@ helpers.checkedOption = (a: number, b: string) =>
 
 helpers.filetypeValidator = (a: string, b: string) => a == b
 
-helpers.checkAccess = (userPermissions: any, requiredPermissions: any)=>
+helpers.checkAccess = (userPermissions: any, requiredPermissions: any) =>
   checkUserPermissions(userPermissions, requiredPermissions.split(',').map((rp: string) => +rp))
+
+helpers.translateLabel = (TRANSLATIONS: {
+  [key: string | number]: string
+}, value: string | number) => TRANSLATIONS[value] ?? value
 
 export default helpers
