@@ -190,7 +190,7 @@ model Budget {
   clientId          Int
   workOrderId       Int?
   state             Int
-  BudgetDetail      BudgetDetail[]
+  BudgetDetails     BudgetDetail[]
   CreatedBy         User             @relation(fields: [createdById], references: [id])
   createdById       Int
   createdAt         DateTime         @default(now())

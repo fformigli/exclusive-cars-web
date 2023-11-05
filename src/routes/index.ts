@@ -7,6 +7,7 @@ import userRoutes from "./users";
 import clientRoutes from "./clients";
 import configurationRoutes from "./configurations"
 import roleRoutes from "./roles"
+import budgetRoutes from "./budgets"
 
 const routes = Router();
 
@@ -18,5 +19,6 @@ routes.use(userRoutes)
 routes.use(workOrderRoutes)
 routes.use(configurationRoutes)
 routes.use(roleRoutes)
+routes.use(budgetRoutes)
 
 export default routes

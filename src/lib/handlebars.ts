@@ -25,4 +25,11 @@ helpers.translateLabel = (TRANSLATIONS: {
   [key: string | number]: string
 }, value: string | number) => TRANSLATIONS[value] ?? value
 
+helpers.multiply = (a: number, b: number) => a * b
+
+helpers.fixIndex = (a: number) => ++a
+
+helpers.eq = (a: string, b: string) => a == b
+helpers.ne = (a: string, b: string) => a != b
+
 export default helpers

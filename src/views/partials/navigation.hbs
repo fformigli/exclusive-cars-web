@@ -3,7 +3,12 @@
         <ul class="nav flex-sm-column font-weight-bold">
             {{#if (checkAccess user.Role.Permissions "1")}}
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin">Administración</a>
+                    <a class="nav-link" href="/admin">Administración del Sistema</a>
+                </li>
+            {{/if}}
+            {{#if (checkAccess user.Role.Permissions "1")}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/financial-management">Administración Financiera</a>
                 </li>
             {{/if}}
             {{#if (checkAccess user.Role.Permissions "17,18,19,20,21")}}

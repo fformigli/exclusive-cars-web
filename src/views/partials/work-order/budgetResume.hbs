@@ -14,17 +14,23 @@
                         </div>
                     {{else}}
                         <div class="col-sm-7 my-auto">
-                            <h5>Presupuesto #{{latestBudget.id}} {{translateLabel BUDGET_STATES_TRANSLATE latestBudget.state}}</h5>
+                            <h5>Presupuesto #{{latestBudget.id}} {{translateLabel BUDGET_STATES_TRANSLATE
+                                                                                  latestBudget.state}}</h5>
                             <p>Agregado el {{formatter
                                     latestBudget.createdAt
                                     "DD/MM/YYYY HH:mm"}}</p>
                         </div>
                         <div class="col-sm-3 my-auto">
-                            <h3>Total: X Gs.</h3>
+                            <h3>Total: {{latestBudget.totalAmount}} Gs.</h3>
                         </div>
                         <div class="col my-auto">
                             <button class="btn btn-success float-right">
-                                Modificar Presupuesto
+                                {{#if (eq latestBudget.state 1) }}
+                                    Modificar
+                                {{else}}
+                                    Ver
+                                {{/if}}
+                                <br>Presupuesto
                             </button>
                         </div>
                     {{/unless}}
