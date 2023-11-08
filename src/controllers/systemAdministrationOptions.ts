@@ -6,5 +6,6 @@ export const systemAdministrationOptions = (req: Request, res: Response) => {
 
 export const financialManagementOptions = (req: Request, res: Response) => {
   res.render('financial-management/options.hbs');
+  // todo prepare options
 };
 
