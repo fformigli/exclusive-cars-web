@@ -17,7 +17,8 @@
                                 <label>Sucursal</label>
                                 <select name="workShopBranchId" class="custom-select" required>
                                     {{#each branches}}
-                                        <option value="{{id}}" {{ selectedOption id ../wo.WorkShopBranch.id }}>{{name}}</option>
+                                        <option value="{{id}}" {{ selectedOption id
+                                                                                 ../wo.WorkShopBranch.id }}>{{name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -27,13 +28,15 @@
                                 <select name="clientId" class="custom-select">
                                     {{#each clients}}
                                         <option value="{{id}}" {{ selectedOption id
-                                                                                 ../wo.Client.id }}>{{User.fullName}} - CI: {{User.documentNumber}}</option>
+                                                                                 ../wo.Client.id }}>{{User.fullName}} -
+                                            CI: {{User.documentNumber}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="vehicleInformation">Datos del Vehículo</label>
-                                <input type="text" value="{{wo.vehicleInformation}}" class="form-control" name="vehicleInformation"
+                                <input type="text" value="{{wo.vehicleInformation}}" class="form-control"
+                                       name="vehicleInformation"
                                        placeholder="Marca/Modelo/Color">
                             </div>
                             <div class="form-group">
@@ -97,115 +100,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        {{#each wof}}
-                            {{#if (filetypeValidator filetype "img")}}
-                                <div class="col-sm-3">
-                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
-                                         onclick="mostrarImagen('/uploads/{{filename}}')"/>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
-                                            class="btn btn-danger btn-block">
-                                        Borrar
-                                    </button>
-                                </div>
-                            {{/if}}
-                            {{#if (filetypeValidator filetype "video")}}
-                                <div class="col-sm-3">
-                                    <video class="rounded float-left img-fluid" src="/uploads/{{filename}}"
-                                           onclick="mostrarVideo('/uploads/{{filename}}')"></video>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
-                                            class="btn btn-danger btn-block">
-                                        Borrar
-                                    </button>
-                                </div>
-                            {{/if}}
-                            {{#if (filetypeValidator filetype "unknown")}}
-                                <div class="col-sm-3">
-                                    <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
-                                         alt="Este formato puede no mostrarse"
-                                         onclick="mostrarImagen('/uploads/{{filename}}')"/>
-                                    <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
-                                            class="btn btn-danger btn-block">
-                                        Borrar
-                                    </button>
-                                </div>
-                            {{/if}}
-                        {{/each}}
-                    </div>
-<!--                    <div class="row">-->
-<!--                        <div class="col-sm-6">-->
-<!--                            <div class="form-group">-->
-<!--                                <label>Agregar Archivos</label>-->
-<!--                                <input type="file" name="archivos" id="archivos">-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    {{> work-order/files }}
                     <div class="row">
                         {{> formButtons}}
                     </div>
                 </form>
             </div>
         </div>
-        <div class="card">
-            <div class="row">
-                <div class="card-body">
-                    <form action="/work-orders/add/budget/{{wo.id}}" method="get" target="_blank">
-                        <div class="row">
-                            <div class="col-sm-10">
-
-                            </div>
-                            <div class="col my-auto">
-                                <button class="btn btn-success float-right">
-                                    Agregar Presupuesto
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="row">
-                {{#each wo.WorkOrderComments}}
-                    <div class="comment-box mx-auto">
-                        {{comment}}
-                        <div class="comment-by">comentado por {{CreatedBy.fullName}} el {{formatter createdAt
-                                                                                                    "DD/MM/YYYY HH:mm"}}</div>
-                    </div>
-                {{/each}}
-            </div>
-            {{#if wo.id}}
-                <div class="card-body">
-                    <form action="/work-orders/add/comment/{{wo.id}}" method="POST">
-                        <div class="row">
-                            <div class="col-sm-10">
-                                <div>
-                                    <label>Comentario</label>
-                                    <textarea name="comment" id="comment" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <div class="col my-auto">
-                                <button class="btn btn-success float-right">
-                                    Agregar Comentario
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            {{/if}}
-        </div>
-        <div id="modal" class="modal" onclick="this.style.display='none'">
-            <span class="w3-button hover-red xlarge display-topright">&times;</span>
-            <div class="modal-content animate-zoom">
-                <img id="image_modal" src="" style="width100%">
-            </div>
-        </div>
-        <div id="video_modal" class="modal">
-            <span class="w3-button hover-red xlarge display-topright" onclick="cerrarVideo()">&times;</span>
-            <div class="modal-content animate-zoom">
-                <video id="video_modal_i" src="" style="width100%" controls></video>
-            </div>
-        </div>
+        {{> work-order/budgetResume}}
+        {{> work-order/commentSection}}
+        {{> work-order/media}}
     </div>
 </div>
 

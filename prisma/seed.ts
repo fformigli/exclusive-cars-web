@@ -62,6 +62,12 @@ async function main() {
     { name: 'CREATE_ROLES', description: 'Crear Roles', category: 'Roles' },
     { name: 'MODIFY_ROLES', description: 'Modificar Roles', category: 'Roles' },
     { name: 'DELETE_ROLES', description: 'Eliminar Roles', category: 'Roles' },
+    { name: 'ADMIN_BUDGETS', description: 'Administrar Presupuestos', category: 'Administración' },
+    { name: 'CREATE_BUDGETS', description: 'Crear Presupuestos', category: 'Presupuesto' },
+    { name: 'MODIFY_BUDGETS', description: 'Modificar Presupuestos', category: 'Presupuesto' },
+    { name: 'DELETE_BUDGETS', description: 'Eliminar Presupuestos', category: 'Presupuesto' },
+    { name: 'ADMIN_FINANCIAL_MANAGEMENT', description: 'Administrar opciones financieras', category: 'Administración' },
+    { name: 'FINANCIAL_MANAGEMENT_OPTIONS', description: 'Ver opciones de administración financiera', category: 'Administración Financiera' },
   ]
 
   await createMany(prisma.permission, permissionsToCreate)

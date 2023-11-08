@@ -6,8 +6,7 @@ export const validateReferenceId = async (model: any, id: number, modelName: str
   }
   const query: any = {
     where: {
-      id,
-      deletedAt: null
+      id
     },
   }
 
@@ -81,4 +80,12 @@ export const validateWorkOrderReferenceId = async (id: number, include?: any) =>
 
 export const validateWorkShopBranchReferenceId = async (id: number, include?: any) => {
   return validateReferenceId(prisma.workShopBranch, id, 'sucursal', include)
+}
+
+export const validateBudgetReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.budget, id, 'presupuesto', include)
+}
+
+export const validateBudgetDetailReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.budgetDetail, id, 'detalle de presupuesto', include)
 }

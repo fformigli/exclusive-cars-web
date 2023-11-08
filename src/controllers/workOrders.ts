@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Client, Configuration, User, WorkOrder, WorkShopBranch } from "@prisma/client";
 import { getEmployees } from "./users";
-import { IDataForm, IWorkOrderState } from "../lib/types";
-import { WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
+import { IDataForm, IOption } from "../lib/types";
+import { BUDGET_STATES_TRANSLATE, WORK_ORDER_STATE_TRANSLATE } from "../lib/constants/translate";
 import prisma from "../lib/prisma";
 import { getFuelLevels, getWorkShopBranches } from "./configurations";
 import { getClientList } from "./clients";
@@ -13,24 +13,29 @@ import {
   validateWorkOrderReferenceId, validateWorkShopBranchReferenceId
 } from "../lib/prisma/utils";
 import { getQueryString } from "../lib/helpers";
+import { getCombosFromTranslateConstants } from "../lib/constants/functions";
+import { getLatestBudget } from "./budgets";
 
 // import fs from 'fs';
 // import path from 'path';
 
 interface IWorkOrderDataForm extends IDataForm {
-  workOrderStates: IWorkOrderState[],
+  workOrderStates: IOption[],
   employees: User[],
   fuelStates: Configuration[],
   clients: Client[]
   branches: WorkShopBranch[]
   wo?: any
+  latestBudget?: any
+  BUDGET_STATES_TRANSLATE: any
 }
 
 interface IWorkOrderListDataForm {
   employees: User[],
-  workOrderStates: IWorkOrderState[]
+  workOrderStates: IOption[]
   filter?: any
   workOrders?: WorkOrder[]
+  WORK_ORDER_STATE_TRANSLATE: any
 }
 
 interface WorkOrderListItem extends WorkOrder {
@@ -38,7 +43,7 @@ interface WorkOrderListItem extends WorkOrder {
 }
 
 async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
-  const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
+  const workOrderStates: IOption[] = getCombosFromTranslateConstants(WORK_ORDER_STATE_TRANSLATE)
   const employees: User[] = await getEmployees()
   const fuelStates: Configuration[] = await getFuelLevels()
   const clients: Client[] = await getClientList()
@@ -51,7 +56,8 @@ async function chargeFormCombos(): Promise<IWorkOrderDataForm> {
     fuelStates,
     clients,
     branches,
-    cancelPath: '/work-orders'
+    cancelPath: '/work-orders',
+    BUDGET_STATES_TRANSLATE
   }
 }
 
@@ -64,21 +70,14 @@ const WORK_ORDER_DEFAULT_INCLUDES = {
 
 }
 
-const getWorkOrderStates = () => Object.entries(WORK_ORDER_STATE_TRANSLATE).reduce((wo: any, s: [string, string]) => {
-  wo.push({
-    value: s[0],
-    label: s[1]
-  })
-  return wo
-}, [])
-
 const getListCombos = async (): Promise<IWorkOrderListDataForm> => {
   const employees: User[] = await getEmployees()
-  const workOrderStates: IWorkOrderState[] = getWorkOrderStates()
+  const workOrderStates: IOption[] = getCombosFromTranslateConstants(WORK_ORDER_STATE_TRANSLATE)
 
   return {
     employees,
-    workOrderStates
+    workOrderStates,
+    WORK_ORDER_STATE_TRANSLATE
   }
 }
 
@@ -109,7 +108,6 @@ export const list = async (req: Request, res: Response) => {
     if (req.query?.state) {
       where.state = +req.query.state
     }
-    console.log(JSON.stringify({ where }, null, 2))
 
     dataForm.workOrders = await prisma.workOrder.findMany({
       orderBy: {
@@ -124,11 +122,6 @@ export const list = async (req: Request, res: Response) => {
         }
       },
       where
-    })
-
-    // traducimos
-    dataForm.workOrders?.forEach((wo: WorkOrderListItem) => {
-      wo.stateLabel = WORK_ORDER_STATE_TRANSLATE[wo.state] ?? wo.state
     })
 
     return res.render('work-orders/list.hbs', dataForm);
@@ -232,8 +225,6 @@ export const createWorkOrder = async (req: Request, res: Response) => {
     req.flash('message', 'Error: ' + (err.message || err));
     const query = getQueryString(req.body)
 
-    console.log({ query })
-
     res.redirect(`/work-orders/add?${query}`);
   }
 };
@@ -244,7 +235,7 @@ export const editWorkOrderForm = async (req: Request, res: Response) => {
 
     const dataForm: IWorkOrderDataForm = await chargeFormCombos();
     dataForm.wo = await validateWorkOrderReferenceId(id, WORK_ORDER_DEFAULT_INCLUDES)
-    console.log(dataForm.wo)
+    dataForm.latestBudget = await getLatestBudget(dataForm.wo)
 
     res.render('work-orders/form.hbs', dataForm);
   } catch (err: any) {

@@ -1,0 +1,43 @@
+<div class="row">
+    {{#each wof}}
+        {{#if (filetypeValidator filetype "img")}}
+            <div class="col-sm-3">
+                <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
+                     onclick="mostrarImagen('/uploads/{{filename}}')"/>
+                <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                        class="btn btn-danger btn-block">
+                    Borrar
+                </button>
+            </div>
+        {{/if}}
+        {{#if (filetypeValidator filetype "video")}}
+            <div class="col-sm-3">
+                <video class="rounded float-left img-fluid" src="/uploads/{{filename}}"
+                       onclick="mostrarVideo('/uploads/{{filename}}')"></video>
+                <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                        class="btn btn-danger btn-block">
+                    Borrar
+                </button>
+            </div>
+        {{/if}}
+        {{#if (filetypeValidator filetype "unknown")}}
+            <div class="col-sm-3">
+                <img class="rounded float-left img-fluid cursor-zoom" src="/uploads/{{filename}}"
+                     alt="Este formato puede no mostrarse"
+                     onclick="mostrarImagen('/uploads/{{filename}}')"/>
+                <button type="button" onclick="eliminarArchivo({{../wo.id}}, {{id}});"
+                        class="btn btn-danger btn-block">
+                    Borrar
+                </button>
+            </div>
+        {{/if}}
+    {{/each}}
+</div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-6">-->
+<!--                            <div class="form-group">-->
+<!--                                <label>Agregar Archivos</label>-->
+<!--                                <input type="file" name="archivos" id="archivos">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->

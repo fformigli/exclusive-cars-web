@@ -4,11 +4,11 @@ export interface IConfigurationList extends Configuration {
   typeName?: string
 }
 
-export interface IWorkOrderState {
-  value: number,
-  label: string
-}
-
 export interface IDataForm {
   cancelPath: string
+}
+
+export interface IOption {
+  value: string | number,
+  label: string
 }
