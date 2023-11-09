@@ -7,8 +7,18 @@ const helpers: any = {};
 
 helpers.timeAgo = timeAgo
 
-helpers.formatter = (timestamp: any, format: any) => {
+helpers.dateFormatter = (timestamp: any, format: any) => {
   return dateFormat(timestamp, format);
+}
+
+helpers.currencyFormatter = (amount: string = "0") => {
+  const pattern = /(-?\d+)(\d{3})/
+  const format = (a: any) => a.toString().replace(pattern, "$1.$2")
+  amount = amount.toString()
+  while (pattern.test(amount)) {
+    amount = format(amount)
+  }
+  return `${amount} Gs.`
 }
 
 helpers.selectedOption = (a: string, b: string) => a == b ? "selected" : "";
@@ -30,6 +40,7 @@ helpers.multiply = (a: number, b: number) => a * b
 helpers.fixIndex = (a: number) => ++a
 
 helpers.eq = (a: string, b: string) => a == b
+
 helpers.ne = (a: string, b: string) => a != b
 
 export default helpers

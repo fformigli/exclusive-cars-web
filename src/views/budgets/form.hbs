@@ -9,9 +9,9 @@
                     <h5>{{translateLabel BUDGET_STATES_TRANSLATE budget.state}}</h5>
                 {{/unless}}
                 Cliente: {{ budget.Client.User.fullName }}
-                <div class="comment-by">Agregado el {{formatter budget.createdAt "DD/MM/YYYY HH:mm"}}</div>
+                <div class="comment-by">Agregado el {{dateFormatter budget.createdAt "DD/MM/YYYY HH:mm"}}</div>
                 {{#if (ne budget.state 1) }}
-                    <div class="comment-by">{{translateLabel BUDGET_STATES_TRANSLATE budget.state}} el {{formatter
+                    <div class="comment-by">{{translateLabel BUDGET_STATES_TRANSLATE budget.state}} el {{dateFormatter
                             budget.feedbackTimestamp "DD/MM/YYYY HH:mm"}}</div>
                 {{/if}}
             </div>
@@ -32,11 +32,10 @@
                                 <td>{{fixIndex @index}}</td>
                                 <td>{{concept}}</td>
                                 <td>{{quantity}}</td>
-                                <td>{{unitaryPrice}}</td>
-                                <td>{{ multiply quantity unitaryPrice}} Gs.</td>
+                                <td>{{ currencyFormatter unitaryPrice}}</td>
+                                <td>{{ currencyFormatter (multiply quantity unitaryPrice)}}</td>
                                 <td>
-                                    {{#if (eq budget.state 1) }}
-
+                                    {{#if (eq ../budget.state 1) }}
                                         <button type="button" onclick="deleteBudgetDetail({{id}});"
                                                 class="btn btn-danger">
                                             Borrar
@@ -59,8 +58,8 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td colspan="5"><h3>Total</h3></td>
-                            <td colspan="1"><h3>{{budget.totalAmount}} Gs.</h3></td>
+                            <td colspan="5" class="text-right"><h3>Total</h3></td>
+                            <td colspan="1"><h3>{{ currencyFormatter budget.totalAmount}}</h3></td>
                         </tr>
                         </tfoot>
                     </table>

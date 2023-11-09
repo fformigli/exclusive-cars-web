@@ -9,9 +9,7 @@ import {
 import { BUDGET_STATES } from "../lib/constants/general";
 import { getCombosFromTranslateConstants } from "../lib/constants/functions";
 import { BUDGET_STATES_TRANSLATE } from "../lib/constants/translate";
-import { IDataForm } from "../lib/types";
 import { getQueryString } from "../lib/helpers";
-import budgets from "../routes/budgets";
 
 /**
  * endpoint para recuperar el presupuesto más nuevo asociado a una orden de trabajo
@@ -46,8 +44,9 @@ export const getWorkOrderLatestBudget = async (req: Request, res: Response) => {
  */
 const getLatestBudgetOrCreate = async (workOrder: WorkOrder, userId: number) => {
   let budget = await getLatestBudget(workOrder)
+  console.log('existe un budget', budget)
 
-  if (!budget) {
+  if (!budget?.id) {
     // create an empty budget
     await createBudgetFromWorkOrder(workOrder.id, workOrder.clientId, userId)
     budget = await getLatestBudget(workOrder)
@@ -64,12 +63,10 @@ export const getLatestBudget = async (workOrder: WorkOrder) => {
     include: { Client: { include: { User: true } }, BudgetDetails: true }
   })
 
-  budget = budgets?.[0]
+  budget = budgets?.[0] ?? {}
 
-  // calculamos el total del budget
-  budget.totalAmount = budget.BudgetDetails.reduce((total: number, detail: BudgetDetail) => total += detail.quantity * detail.unitaryPrice, 0)
-
-  console.log(budget.totalAmount)
+  // calculamos el total del budget si el budget existe o no tiene detalles, asigna cero
+  budget.totalAmount = budget?.BudgetDetails?.reduce((total: number, detail: BudgetDetail) => total += detail.quantity * detail.unitaryPrice, 0) ?? 0
 
   return budget
 }
@@ -180,6 +177,7 @@ export const createNewBudget = async (req: Request, res: Response) => {
 }
 
 const createBudgetFromWorkOrder = async (workOrderId: number, clientId: number, userId: number) => {
+  console.log('creando budget')
   return prisma.budget.create({
     data: {
       WorkOrder: {

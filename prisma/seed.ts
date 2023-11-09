@@ -74,7 +74,7 @@ async function main() {
 
   // add roles
   const rolesToCreate: any[] = [
-    { name: 'Administrador', context: 'user', Permissions: [1, 2, 7, 12, 17, 22], seed: true },
+    { name: 'Administrador', context: 'user', Permissions: [1, 2, 7, 12, 17, 22, 27, 31], seed: true },
     { name: 'Cliente', context: 'client', Permissions: [18], seed: true },
     { name: 'Mecánico', context: 'user', Permissions: [18, 19, 20, 21], seed: true },
   ]

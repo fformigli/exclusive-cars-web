@@ -6,7 +6,7 @@
                     <h3>Nueva Orden de Trabajo</h3>
                 {{else}}
                     <h3>Editando orden de Trabajo #{{wo.id}}</h3>
-                    <div class="comment-by">Agregado el {{formatter wo.createdAt "DD/MM/YYYY HH:mm"}}</div>
+                    <div class="comment-by">Agregado el {{dateFormatter wo.createdAt "DD/MM/YYYY HH:mm"}}</div>
                 {{/unless}}
             </div>
             <div class="card-body">

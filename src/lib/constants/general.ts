@@ -9,7 +9,9 @@ export const BUDGET_STATES: { [key: string]: number } = Object.freeze({
   PENDING: 1,
   APPROVED: 2,
   REJECTED: 3,
-  EXPIRED: 4
+  EXPIRED: 4,
+  CHECKOUT: 5,
+  PAID: 6
 })
 
 export const USER_TYPES: { [key: string]: number } = Object.freeze({
