@@ -68,6 +68,8 @@ async function main() {
     { name: 'DELETE_BUDGETS', description: 'Eliminar Presupuestos', category: 'Presupuesto' },
     { name: 'ADMIN_FINANCIAL_MANAGEMENT', description: 'Administrar opciones financieras', category: 'Administración' },
     { name: 'FINANCIAL_MANAGEMENT_OPTIONS', description: 'Ver opciones de administración financiera', category: 'Administración Financiera' },
+    { name: 'LIST_BUDGETS', description: 'Listar Presupuestos', category: 'Presupuesto' },
+
   ]
 
   await createMany(prisma.permission, permissionsToCreate)

@@ -3,26 +3,42 @@
         <div class="col-md-4 mx-auto">
             <div class="card">
                 <div class="p-3">
-                    <form action="/budgets/approved" method="get">
+                    <form action="/budgets" method="get">
+<!--                        para ver solo presupuestos aprobados-->
+                        <input type="hidden" name="state" value="2">
+
                         <button class="btn btn-success btn-block mb-3">
                             Ver presupuestos aprobados
                         </button>
                     </form>
-                    <form action="#caja" method="get">
+
+                    <form action="#proveedores" method="get">
                         <button class="btn btn-success btn-block mb-3">
-                            Caja
+                            Proveedores
                         </button>
                     </form>
-                    <form action="#facturacion" method="get">
+
+                    <form action="#productos" method="get">
                         <button class="btn btn-success btn-block mb-3">
-                            Configuraciones de facturación
+                            Productos
+                        </button>
+                    </form>
+
+                    <form action="#servicios" method="get">
+                        <button class="btn btn-success btn-block mb-3">
+                            Servicios
+                        </button>
+                    </form>
+
+                    <form action="#compras" method="get">
+                        <button class="btn btn-success btn-block mb-3">
+                            Ingresar compras
                         </button>
                     </form>
 
                     <form action="#facturacion" method="get">
                         <button class="btn btn-success btn-block mb-3">
                             Configuraciones de facturación
-                            teeeest
                         </button>
                     </form>
                 </div>

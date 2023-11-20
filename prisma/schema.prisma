@@ -8,13 +8,14 @@ datasource db {
 }
 
 model WorkShopBranch {
-  id          BigInt      @id @default(autoincrement())
-  name        String
-  address     String
-  phoneNumber String
-  User        User[]
-  WorkOrder   WorkOrder[]
-  deletedAt   DateTime?
+  id              BigInt            @id @default(autoincrement())
+  name            String
+  address         String
+  phoneNumber     String
+  User            User[]
+  WorkOrder       WorkOrder[]
+  deletedAt       DateTime?
+  InvoiceStamping InvoiceStamping[]
 
   @@map("work_shop_branches")
 }
@@ -63,25 +64,25 @@ model User {
   WorkShopBranch   WorkShopBranch     @relation(fields: [workShopBranchId], references: [id])
   workShopBranchId BigInt             @default(1)
   Budget           Budget[]
-  BudgetComments   BudgetComments[]
 
   @@map("users")
 }
 
 model Client {
-  id             Int         @id @default(autoincrement())
-  User           User        @relation(fields: [userId], references: [id])
-  userId         Int         @unique
+  id             Int           @id @default(autoincrement())
+  User           User          @relation(fields: [userId], references: [id])
+  userId         Int           @unique
   phoneNumber    String
   ruc            String
   email          String
-  CreatedBy      User        @relation("CreatedBy", fields: [createdById], references: [id])
+  CreatedBy      User          @relation("CreatedBy", fields: [createdById], references: [id])
   createdById    Int
-  createdAt      DateTime    @default(now())
+  createdAt      DateTime      @default(now())
   deletedAt      DateTime?
   WorkOrder      WorkOrder[]
-  Budget         Budget[]    @relation("Client")
-  BudgetFeedback Budget[]    @relation("ClientFeedback")
+  Budget         Budget[]      @relation("Client")
+  BudgetFeedback Budget[]      @relation("ClientFeedback")
+  SaleInvoice    SaleInvoice[]
 
   @@map("clients")
 }
@@ -152,7 +153,7 @@ model WorkOrderComment {
 }
 
 model Supplier {
-  id               BigInt    @id @default(autoincrement())
+  id               BigInt            @id @default(autoincrement())
   name             String
   description      String
   phoneNumber      String
@@ -160,43 +161,56 @@ model Supplier {
   otherContactInfo String
   Product          Product[]
   deletedAt        DateTime?
+  ruc              String
+  PurchaseInvoice  PurchaseInvoice[]
+
+  @@map("suppliers")
 }
 
 model Product {
-  id           BigInt         @id @default(autoincrement())
-  name         String
-  description  String
-  quantity     Int
-  cost         Int
-  Supplier     Supplier?      @relation(fields: [supplierId], references: [id])
-  supplierId   BigInt?
-  category     String
-  deletedAt    DateTime?
-  BudgetDetail BudgetDetail[]
+  id                    BigInt                  @id @default(autoincrement())
+  name                  String
+  description           String
+  quantity              Int
+  cost                  BigInt
+  unitaryPrice          BigInt
+  Supplier              Supplier?               @relation(fields: [supplierId], references: [id])
+  supplierId            BigInt?
+  category              String
+  deletedAt             DateTime?
+  BudgetDetail          BudgetDetail[]
+  SaleInvoiceDetail     SaleInvoiceDetail[]
+  iva                   Int // 0, 5, 10
+  PurchaseInvoiceDetail PurchaseInvoiceDetail[]
+
+  @@map("products")
 }
 
 model Service {
-  id           BigInt         @id @default(autoincrement())
-  name         String
-  description  String
-  BudgetDetail BudgetDetail[]
-  price        Int
+  id                BigInt              @id @default(autoincrement())
+  name              String
+  description       String
+  BudgetDetail      BudgetDetail[]
+  price             BigInt
+  SaleInvoiceDetail SaleInvoiceDetail[]
+  iva               Int // 0, 5, 10
+
+  @@map("services")
 }
 
 model Budget {
-  id                BigInt           @id @default(autoincrement())
-  WorkOrder         WorkOrder?       @relation(fields: [workOrderId], references: [id])
-  Client            Client           @relation("Client", fields: [clientId], references: [id])
+  id                BigInt         @id @default(autoincrement())
+  WorkOrder         WorkOrder?     @relation(fields: [workOrderId], references: [id])
+  Client            Client         @relation("Client", fields: [clientId], references: [id])
   clientId          Int
   workOrderId       Int?
   state             Int
   BudgetDetails     BudgetDetail[]
-  CreatedBy         User             @relation(fields: [createdById], references: [id])
+  CreatedBy         User           @relation(fields: [createdById], references: [id])
   createdById       Int
-  createdAt         DateTime         @default(now())
+  createdAt         DateTime       @default(now())
   deletedAt         DateTime?
-  BudgetComments    BudgetComments[]
-  FeedbackBy        Client?          @relation("ClientFeedback", fields: [feedbackById], references: [id])
+  FeedbackBy        Client?        @relation("ClientFeedback", fields: [feedbackById], references: [id])
   feedbackById      Int?
   feedbackTimestamp DateTime?
 
@@ -209,7 +223,7 @@ model BudgetDetail {
   budgetId       BigInt
   concept        String
   quantity       Int
-  unitaryPrice   Int
+  unitaryPrice   BigInt
   Product        Product? @relation(fields: [productId], references: [id])
   productId      BigInt?
   Service        Service? @relation(fields: [serviceId], references: [id])
@@ -219,12 +233,77 @@ model BudgetDetail {
   @@map("budget_details")
 }
 
-model BudgetComments {
-  id          BigInt   @id @default(autoincrement())
-  Budget      Budget   @relation(fields: [budgetId], references: [id])
-  budgetId    BigInt
-  comment     String
-  createdAt   DateTime
-  CreatedBy   User     @relation(fields: [createdById], references: [id])
-  createdById Int
+model SaleInvoice {
+  id                BigInt              @id @default(autoincrement())
+  Client            Client              @relation(fields: [clientId], references: [id])
+  clientId          Int
+  InvoiceStamping   InvoiceStamping     @relation(fields: [invoiceStampingId], references: [id])
+  invoiceStampingId BigInt
+  stamping          BigInt
+  ruc               String
+  name              String
+  createdAt         DateTime
+  state             Int
+  totalAmount       BigInt
+  totalIVA0         BigInt
+  totalIVA5         BigInt
+  totalIVA10        BigInt
+  totalIVA          BigInt
+  closed            Boolean             @default(false)
+  SaleInvoiceDetail SaleInvoiceDetail[]
+
+  @@map("sale_invoices")
+}
+
+model SaleInvoiceDetail {
+  id            BigInt      @id @default(autoincrement())
+  Invoice       SaleInvoice @relation(fields: [saleInvoiceId], references: [id])
+  saleInvoiceId BigInt
+  concept       String
+  quantity      Int
+  unitaryPrice  BigInt
+  Product       Product?    @relation(fields: [productId], references: [id])
+  productId     BigInt?
+  Service       Service?    @relation(fields: [serviceId], references: [id])
+  serviceId     BigInt?
+  iva0          BigInt
+  iva5          BigInt
+  iva10         BigInt
+  invoiceType   Int // compra o venta
+
+  @@map("sale_invoice_details")
+}
+
+model InvoiceStamping {
+  id               BigInt         @id @default(autoincrement())
+  WorkShopBranch   WorkShopBranch @relation(fields: [workShopBranchId], references: [id])
+  workShopBranchId BigInt
+  branchCode       String
+  pointCode        String
+  start            BigInt
+  end              BigInt
+  current          BigInt
+  validUntil       String
+  ruc              String
+  SaleInvoice      SaleInvoice[]
+  createdAt        DateTime
+
+  @@map("invoices_stampings")
+}
+
+model PurchaseInvoice {
+  id         BigInt   @id @default(autoincrement())
+  Supplier   Supplier @relation(fields: [supplierId], references: [id])
+  supplierId BigInt
+  stamping   String
+  createdAt  DateTime
+}
+
+model PurchaseInvoiceDetail {
+  id        BigInt  @id @default(autoincrement())
+  Product   Product @relation(fields: [productId], references: [id])
+  productId BigInt
+  quantity  Int
+  cost      BigInt
+  iva       Int // 0 5 10
 }
