@@ -37,11 +37,11 @@ async function main() {
 
   const permissionsToCreate: any[] = [
     { name: 'ADMIN_OPTIONS', description: 'Acceso a la consola de administración', category: 'Administración' },
-    { name: 'ADMIN_USERS', description: 'Administrar Usuarios', category: 'Administración' },
-    { name: 'LIST_USERS', description: 'Listar Usuarios', category: 'Usuarios' },
-    { name: 'CREATE_USERS', description: 'Crear Usuarios', category: 'Usuarios' },
-    { name: 'MODIFY_USERS', description: 'Modificar Usuarios', category: 'Usuarios' },
-    { name: 'DELETE_USERS', description: 'Eliminar Usuarios', category: 'Usuarios' },
+    { name: 'ADMIN_USERS', description: 'Administrar Proveedores', category: 'Administración' },
+    { name: 'LIST_USERS', description: 'Listar Proveedores', category: 'Proveedores' },
+    { name: 'CREATE_USERS', description: 'Crear Proveedores', category: 'Proveedores' },
+    { name: 'MODIFY_USERS', description: 'Modificar Proveedores', category: 'Proveedores' },
+    { name: 'DELETE_USERS', description: 'Eliminar Proveedores', category: 'Proveedores' },
     { name: 'ADMIN_CLIENTS', description: 'Administrar Clientes', category: 'Administración' },
     { name: 'CREATE_CLIENTS', description: 'Crear Clientes', category: 'Clientes' },
     { name: 'LIST_CLIENTS', description: 'Listar Clientes', category: 'Clientes' },
@@ -67,16 +67,23 @@ async function main() {
     { name: 'MODIFY_BUDGETS', description: 'Modificar Presupuestos', category: 'Presupuesto' },
     { name: 'DELETE_BUDGETS', description: 'Eliminar Presupuestos', category: 'Presupuesto' },
     { name: 'ADMIN_FINANCIAL_MANAGEMENT', description: 'Administrar opciones financieras', category: 'Administración' },
-    { name: 'FINANCIAL_MANAGEMENT_OPTIONS', description: 'Ver opciones de administración financiera', category: 'Administración Financiera' },
+    {
+      name: 'FINANCIAL_MANAGEMENT_OPTIONS',
+      description: 'Ver opciones de administración financiera',
+      category: 'Administración Financiera'
+    },
     { name: 'LIST_BUDGETS', description: 'Listar Presupuestos', category: 'Presupuesto' },
-
+    { name: 'ADMIN_SUPPLIERS', description: 'Administrar Proveedores', category: 'Administración' },
+    { name: 'LIST_SUPPLIERS', description: 'Listar Proveedores', category: 'Proveedores' },
+    { name: 'CREATE_SUPPLIERS', description: 'Crear Proveedores', category: 'Proveedores' },
+    { name: 'MODIFY_SUPPLIERS', description: 'Modificar Proveedores', category: 'Proveedores' },
   ]
 
   await createMany(prisma.permission, permissionsToCreate)
 
   // add roles
   const rolesToCreate: any[] = [
-    { name: 'Administrador', context: 'user', Permissions: [1, 2, 7, 12, 17, 22, 27, 31], seed: true },
+    { name: 'Administrador', context: 'user', Permissions: [1, 2, 7, 12, 17, 22, 27, 31, 32, 34], seed: true },
     { name: 'Cliente', context: 'client', Permissions: [18], seed: true },
     { name: 'Mecánico', context: 'user', Permissions: [18, 19, 20, 21], seed: true },
   ]
@@ -107,7 +114,7 @@ async function main() {
         }
       },
       WorkShopBranch: {
-        connect: { id: 1}
+        connect: { id: 1 }
       }
 
     }

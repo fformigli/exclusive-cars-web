@@ -1,0 +1,49 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                {{#unless supplier.id}}
+                    <h3>Nuevo Proveedor</h3>
+                {{else}}
+                    <h3>Editando Proveedor</h3>
+                {{/unless}}
+            </div>
+            <div class="card-body">
+                <form action="/suppliers/{{supplier.id}}" method="POST" autocomplete="off">
+                    <div class="form-group">
+                        <label for="name">Nombre</label>
+                        <input type="text" name="name" placeholder="Nombre" class="form-control"
+                               autofocus required value="{{supplier.name}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descripción</label>
+                        <input type="text" name="description" placeholder="Descripción" class="form-control"
+                               autofocus required value="{{supplier.description}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Teléfono</label>
+                        <input type="text" name="phoneNumber" placeholder="+595XXXXXXXXX" class="form-control"
+                               autofocus required value="{{supplier.phoneNumber}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Dirección</label>
+                        <input type="text" name="address" placeholder="Dirección" class="form-control"
+                               autofocus required value="{{supplier.address}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="otherContactInfo">Otros datos de contacto</label>
+                        <input type="text" name="otherContactInfo" placeholder="email/telefonos" class="form-control"
+                               autofocus required value="{{supplier.otherContactInfo}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="ruc">RUC</label>
+                        <input type="text" name="ruc" placeholder="0000-0" class="form-control"
+                               autofocus required value="{{supplier.ruc}}">
+                    </div>
+                    {{> formButtons}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/js/validator.js"></script>

@@ -1,0 +1,41 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3>Compras</h3>
+            </div>
+            <div class="card-body">
+                <div class="pb-3">
+                    <button onclick="location.href='/purchase-invoices/add'" class="btn btn-success">
+                        Ingresar Compra
+                    </button>
+                </div>
+                <table class="table">
+                    <thead>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>RUC</th>
+                    <th></th>
+                    </thead>
+                    <tbody>
+                    {{#each invoices}}
+                        <tr>
+                            <td>{{id}}</td>
+                            <td>{{name}}</td>
+                            <td>{{description}}</td>
+                            <td>{{phoneNumber}}</td>
+                            <td>{{address}}</td>
+                            <td>{{ruc}}</td>
+                        </tr>
+                    {{else}}
+                        {{> noElements}}
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

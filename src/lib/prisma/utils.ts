@@ -89,3 +89,7 @@ export const validateBudgetReferenceId = async (id: number, include?: any) => {
 export const validateBudgetDetailReferenceId = async (id: number, include?: any) => {
   return validateReferenceId(prisma.budgetDetail, id, 'detalle de presupuesto', include)
 }
+
+export const validateSupplierReferenceId = async (id: number, include?: any) => {
+  return validateReferenceId(prisma.supplier, id, 'proveedor', include)
+}

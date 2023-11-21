@@ -8,8 +8,7 @@
     "build": "tsc",
     "clean": "rm -rf dist && rm -rf node_modules",
     "fullbuild": "yarn clean && yarn install && yarn build",
-    "prisma-migrate": "npx prisma migrate dev --name dbupdate",
-    "prisma-reset": "npx prisma migrate reset -f"
+    "prisma-migrate": "npx prisma migrate dev --name dbupdate"
   },
   "repository": {
     "type": "git",

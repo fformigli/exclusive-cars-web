@@ -1,0 +1,120 @@
+<div class="container p-4">
+    <div class="mx-auto">
+        <div class="card">
+            <div class="card-header">
+                {{#unless budget}}
+                    <h3>Hoja de Presupuesto</h3>
+                {{else}}
+                    <h3>Editando Hoja de Presupuesto #{{budget.id}}</h3>
+                    <h5>{{translateLabel BUDGET_STATES_TRANSLATE budget.state}}</h5>
+                {{/unless}}
+                Cliente: {{ budget.Client.User.fullName }}
+                <div class="comment-by">Agregado el {{dateFormatter budget.createdAt "DD/MM/YYYY HH:mm"}}</div>
+                {{#if (ne budget.state 1) }}
+                    <div class="comment-by">{{translateLabel BUDGET_STATES_TRANSLATE budget.state}} el {{dateFormatter
+                            budget.feedbackTimestamp "DD/MM/YYYY HH:mm"}}</div>
+                {{/if}}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead>
+                        <th scope="col">#</th>
+                        <th scope="col">Concepto</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Precio Unit.</th>
+                        <th scope="col">Subtotal</th>
+                        <th scope="col"></th>
+                        </thead>
+                        <tbody>
+                        {{#each budget.BudgetDetails}}
+                            <tr>
+                                <td>{{fixIndex @index}}</td>
+                                <td>{{concept}}</td>
+                                <td>{{quantity}}</td>
+                                <td>{{ currencyFormatter unitaryPrice}}</td>
+                                <td>{{ currencyFormatter (multiply quantity unitaryPrice)}}</td>
+                                <td>
+                                    {{#if (eq ../budget.state 1) }}
+                                        <button type="button" onclick="deleteBudgetDetail({{id}});"
+                                                class="btn btn-danger">
+                                            Borrar
+                                        </button>
+                                    {{/if}}
+
+                                </td>
+                            </tr>
+                        {{/each}}
+                        {{#if (eq budget.state 1) }}
+
+                            <tr>
+                                <td class="text-center" colspan="100%">
+                                    <button type="button" class="btn btn-success ml-auto" id="addDetailBtn">
+                                        + Agregar
+                                    </button>
+                                </td>
+                            </tr>
+                        {{/if}}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-right"><h3>Total</h3></td>
+                            <td colspan="1"><h3>{{ currencyFormatter budget.totalAmount}}</h3></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="w-25 ml-auto pt-5 form-group">
+                    <!--                    botones de presupuesto pendiente -->
+                    {{#if (eq budget.state 1) }}
+
+                        <button class="btn btn-success btn-block mt-2 mr-2"
+                                onclick="budgetFeedback({{budget.id}}, 'APPROVED');">
+                            Aprobar
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-block mt-2 mr-2"
+                                onclick="budgetFeedback({{budget.id}}, 'REJECTED');">
+                            Rechazar
+                        </button>
+                    {{/if}}
+                    <!--                    boton de presupuesto rechazado-->
+                    {{#if (eq budget.state 3) }}
+                        <form id="createNewBudgetForm" method="post" action="/budgets/{{budget.workOrderId}}/add">
+                        </form>
+                        <button type="submit" form="createNewBudgetForm" class="btn btn-success btn-block mt-2 mr-2">
+                            Nuevo presupuesto
+                        </button>
+                    {{/if}}
+
+                    <button type="button" class="btn btn-dark btn-block mt-2 mr-2"
+                            onclick="location.href='{{ cancelPath }}'">
+                        Volver
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{{> budget/addDetailModal }}
+
+<script type="text/javascript">
+    function deleteBudgetDetail(id) {
+        event.stopPropagation()
+        if (confirm('¿Está seguro de que desea eliminar el detalle?')) {
+            location.href = `/budgets/detail/${id}/delete`;
+        }
+        return false
+    }
+
+    function budgetFeedback(id, feedback) {
+        event.stopPropagation()
+        let action = feedback === 'APPROVED' ? 'aprobar' : 'rechazar'
+        if (confirm(`¿Está seguro de que desea ${action} el presupuesto?`)) {
+            location.href = `/budgets/feedback/${id}/${feedback}`;
+        }
+        return false
+    }
+
+</script>

@@ -186,18 +186,6 @@ model Product {
   @@map("products")
 }
 
-model Service {
-  id                BigInt              @id @default(autoincrement())
-  name              String
-  description       String
-  BudgetDetail      BudgetDetail[]
-  price             BigInt
-  SaleInvoiceDetail SaleInvoiceDetail[]
-  iva               Int // 0, 5, 10
-
-  @@map("services")
-}
-
 model Budget {
   id                BigInt         @id @default(autoincrement())
   WorkOrder         WorkOrder?     @relation(fields: [workOrderId], references: [id])
@@ -226,8 +214,6 @@ model BudgetDetail {
   unitaryPrice   BigInt
   Product        Product? @relation(fields: [productId], references: [id])
   productId      BigInt?
-  Service        Service? @relation(fields: [serviceId], references: [id])
-  serviceId      BigInt?
   additionalData String
 
   @@map("budget_details")
@@ -264,8 +250,6 @@ model SaleInvoiceDetail {
   unitaryPrice  BigInt
   Product       Product?    @relation(fields: [productId], references: [id])
   productId     BigInt?
-  Service       Service?    @relation(fields: [serviceId], references: [id])
-  serviceId     BigInt?
   iva0          BigInt
   iva5          BigInt
   iva10         BigInt
@@ -297,6 +281,8 @@ model PurchaseInvoice {
   supplierId BigInt
   stamping   String
   createdAt  DateTime
+
+  @@map("purchase_invoices")
 }
 
 model PurchaseInvoiceDetail {
@@ -306,4 +292,6 @@ model PurchaseInvoiceDetail {
   quantity  Int
   cost      BigInt
   iva       Int // 0 5 10
+
+  @@map("purchase_invoice_details")
 }
