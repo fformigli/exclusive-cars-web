@@ -9,9 +9,7 @@ import {
 import { BUDGET_STATES } from "../lib/constants/general";
 import { getCombosFromTranslateConstants } from "../lib/constants/functions";
 import { BUDGET_STATES_TRANSLATE } from "../lib/constants/translate";
-import { IDataForm } from "../lib/types";
 import { getQueryString } from "../lib/helpers";
-import budgets from "../routes/budgets";
 
 /**
  * endpoint para recuperar el presupuesto más nuevo asociado a una orden de trabajo
@@ -46,8 +44,9 @@ export const getWorkOrderLatestBudget = async (req: Request, res: Response) => {
  */
 const getLatestBudgetOrCreate = async (workOrder: WorkOrder, userId: number) => {
   let budget = await getLatestBudget(workOrder)
+  console.log('existe un budget', budget)
 
-  if (!budget) {
+  if (!budget?.id) {
     // create an empty budget
     await createBudgetFromWorkOrder(workOrder.id, workOrder.clientId, userId)
     budget = await getLatestBudget(workOrder)
@@ -64,12 +63,10 @@ export const getLatestBudget = async (workOrder: WorkOrder) => {
     include: { Client: { include: { User: true } }, BudgetDetails: true }
   })
 
-  budget = budgets?.[0]
+  budget = budgets?.[0] ?? {}
 
-  // calculamos el total del budget
-  budget.totalAmount = budget.BudgetDetails.reduce((total: number, detail: BudgetDetail) => total += detail.quantity * detail.unitaryPrice, 0)
-
-  console.log(budget.totalAmount)
+  // calculamos el total del budget si el budget existe o no tiene detalles, asigna cero
+  budget.totalAmount = budget?.BudgetDetails?.reduce((total: bigint, detail: BudgetDetail) => total + BigInt(detail.quantity) * detail.unitaryPrice, BigInt(0)) ?? 0
 
   return budget
 }
@@ -180,6 +177,7 @@ export const createNewBudget = async (req: Request, res: Response) => {
 }
 
 const createBudgetFromWorkOrder = async (workOrderId: number, clientId: number, userId: number) => {
+  console.log('creando budget')
   return prisma.budget.create({
     data: {
       WorkOrder: {
@@ -196,4 +194,83 @@ const createBudgetFromWorkOrder = async (workOrderId: number, clientId: number, 
       state: BUDGET_STATES.PENDING
     }
   })
+}
+
+export const getBudgetsList = async (req: Request, res: Response) => {
+  try {
+    let dataForm: any = {
+      filter: req.query,
+      BUDGET_STATES_TRANSLATE
+    }
+
+
+    const where: any = {}
+    if (req.query?.search) {
+      where.Client = {
+        User: {
+          fullName: {
+            contains: req.query.search,
+            mode: 'insensitive'
+          }
+        }
+      }
+    }
+
+    if (req.query?.state) {
+      where.state = +req.query.state
+    }
+
+    dataForm.budgets = await prisma.budget.findMany({
+      orderBy: {
+        id: 'desc'
+      },
+      include: {
+        BudgetDetails: true,
+        Client: {
+          include: {
+            User: true
+          }
+        }
+      },
+      where
+    })
+
+    console.log(dataForm)
+
+    dataForm.budgets.map((d: any) => {
+      d.totalAmount = d?.BudgetDetails?.reduce((total: bigint, detail: BudgetDetail) => total + BigInt(detail.quantity) * detail.unitaryPrice, BigInt(0)) ?? 0
+      return d
+    })
+
+    return res.render('budgets/list.hbs', dataForm);
+
+  } catch (e: any) {
+    console.error(e);
+    req.flash('message', 'Error: ' + (e.message ?? e));
+    return res.redirect('/');
+  }
+}
+
+export const getBudget = async (req: Request, res: Response) => {
+  try {
+    const budgetId = parseInt(req.params.budgetId, 10)
+    const budget = await validateBudgetReferenceId(budgetId, {
+      Client: { include: { User: true } },
+      BudgetDetails: true
+    })
+
+    budget.totalAmount = budget?.BudgetDetails?.reduce((total: bigint, detail: BudgetDetail) => total + BigInt(detail.quantity) * detail.unitaryPrice, BigInt(0)) ?? 0
+    const dataForm: any = {
+      budget,
+      budgetStates: getCombosFromTranslateConstants(BUDGET_STATES_TRANSLATE),
+      BUDGET_STATES_TRANSLATE,
+      cancelPath: `/budgets`
+    }
+
+    return res.render('budgets/form.hbs', dataForm)
+  } catch (e: any) {
+    console.error(e);
+    req.flash('message', 'Error: ' + (e?.message ?? e));
+    return res.redirect('/profile');
+  }
 }

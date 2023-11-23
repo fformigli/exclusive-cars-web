@@ -12,5 +12,7 @@ export const BUDGET_STATES_TRANSLATE: { [key: number]: string } = Object.freeze(
   1: 'Pendiente',
   2: 'Aprobado',
   3: 'Rechazado',
-  4: 'Expirado'
+  4: 'Expirado',
+  5: 'En Caja',
+  6: 'Pagado'
 })
