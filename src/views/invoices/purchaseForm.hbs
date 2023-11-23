@@ -2,18 +2,22 @@
     <div class="mx-auto">
         <div class="card">
             <div class="card-header">
-                {{#unless budget}}
-                    <h3>Hoja de Presupuesto</h3>
-                {{else}}
-                    <h3>Editando Hoja de Presupuesto #{{budget.id}}</h3>
-                    <h5>{{translateLabel BUDGET_STATES_TRANSLATE budget.state}}</h5>
-                {{/unless}}
-                Cliente: {{ budget.Client.User.fullName }}
-                <div class="comment-by">Agregado el {{dateFormatter budget.createdAt "DD/MM/YYYY HH:mm"}}</div>
-                {{#if (ne budget.state 1) }}
-                    <div class="comment-by">{{translateLabel BUDGET_STATES_TRANSLATE budget.state}} el {{dateFormatter
-                            budget.feedbackTimestamp "DD/MM/YYYY HH:mm"}}</div>
-                {{/if}}
+                    <h3>Factura de compra</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="supplierId">Proveedor:</label>
+                    <select name="supplierId" class="custom-select">
+                        {{#each suppliers}}
+                            <option value="{{id}}" {{ selectedOption id supplierId }}>{{name}}
+                            </option>
+                        {{/each}}
+                    </select>
+                    <label for="invoiceDate">Fecha:</label>
+                    <input type="text" class="form-control" name="invoiceDate" value="{{dateFormatter currentDate "DD/MM/YYYY"}}" placeholder="DD/MM/YYYY">
+                    <label for="invoiceNumber">Numero de factura:</label>
+                    <input type="text" class="form-control" name="invoiceNumber" value="" placeholder="00X-00X-000000X">
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">

@@ -65,3 +65,9 @@ export const createSupplier = async (req: Request, res: Response) => {
     return res.redirect(`/suppliers/add?${query}`);
   }
 }
+
+export const getSuppliersCombo = async () => {
+  return await prisma.supplier.findMany({
+    select: { id: true, name: true}
+  })
+}

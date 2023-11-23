@@ -226,6 +226,7 @@ model SaleInvoice {
   InvoiceStamping   InvoiceStamping     @relation(fields: [invoiceStampingId], references: [id])
   invoiceStampingId BigInt
   stamping          BigInt
+  invoiceNumber     String
   ruc               String
   name              String
   createdAt         DateTime
@@ -279,7 +280,7 @@ model PurchaseInvoice {
   id         BigInt   @id @default(autoincrement())
   Supplier   Supplier @relation(fields: [supplierId], references: [id])
   supplierId BigInt
-  stamping   String
+  invoiceNumber   String
   createdAt  DateTime
 
   @@map("purchase_invoices")

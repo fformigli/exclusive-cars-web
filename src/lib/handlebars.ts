@@ -38,7 +38,7 @@ helpers.checkAccess = (userPermissions: any, requiredPermissions: any) =>
 
 helpers.translateLabel = (TRANSLATIONS: {
   [key: string | number]: string
-}, value: string | number) => TRANSLATIONS[value] ?? value
+} = {}, value: string | number) => TRANSLATIONS[value] ?? value
 
 helpers.multiply = (a: number, b: number) => BigInt(a) * BigInt(b)
 
